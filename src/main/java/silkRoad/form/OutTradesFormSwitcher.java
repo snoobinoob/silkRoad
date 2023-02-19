@@ -25,4 +25,8 @@ public class OutTradesFormSwitcher extends FormSwitcher {
         outTradesForm.setPosition(position);
         newTradeForm.setPosition(position);
     }
+
+    public void update() {
+        outTradesForm.update();
+    }
 }

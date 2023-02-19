@@ -1,68 +1,71 @@
 package silkRoad.tradingPost;
 
-import java.awt.Point;
 import necesse.engine.network.NetworkClient;
 import necesse.engine.network.PacketReader;
+import necesse.inventory.container.customAction.EmptyCustomAction;
 import necesse.inventory.container.customAction.IntCustomAction;
 import necesse.inventory.container.object.OEInventoryContainer;
 import silkRoad.Trade;
 import silkRoad.TradeRegistry;
-import silkRoad.actions.TradeCustomAction;
+import silkRoad.action.TradeCustomAction;
 
 public class TradingPostContainer extends OEInventoryContainer {
-    public TradeCustomAction addTradeAction;
-    public IntCustomAction removeTradeAction;
-    public IntCustomAction subscribeTradeAction;
-    public IntCustomAction unsubscribeTradeAction;
     public TradingPostObjectEntity objectEntity;
 
-    public TradingPostContainer(NetworkClient client, int uniqueSeed,
-            TradingPostObjectEntity objectEntity, PacketReader reader) {
-        super(client, uniqueSeed, objectEntity, reader);
-        this.objectEntity = objectEntity;
+    public TradeCustomAction addTradeAction;
+    public IntCustomAction removeTradeAction;
+    public IntCustomAction subscribeAction;
+    public IntCustomAction unsubscribeAction;
+    public EmptyCustomAction openAvailableTradesAction;
 
-        this.addTradeAction = registerAction(new TradeCustomAction() {
+    public TradingPostContainer(NetworkClient client, int uniqueSeed, TradingPostObjectEntity oe,
+            PacketReader reader) {
+        super(client, uniqueSeed, oe, reader);
+        objectEntity = oe;
+
+        addTradeAction = registerAction(new TradeCustomAction() {
             @Override
-            protected void run(Trade trade) {
-                if (TradingPostContainer.this.client.isServerClient()) {
-                    objectEntity.addOutgoingTrade(TradeRegistry.register(trade));
+            public void run(Trade trade) {
+                if (client.isServerClient()) {
+                    TradeRegistry.register(trade, objectEntity);
                 }
             }
         });
 
-        this.removeTradeAction = registerAction(new IntCustomAction() {
-            @Override
-            protected void run(int tradeId) {
-                if (TradingPostContainer.this.client.isServerClient()) {
-                    TradeRegistry.removeTrade(tradeId);
-                    objectEntity.removeOutgoingTrade(tradeId);
-                }
-            }
-        });
-
-        this.subscribeTradeAction = registerAction(new IntCustomAction() {
+        removeTradeAction = registerAction(new IntCustomAction() {
             @Override
             protected void run(int tradeId) {
-                if (TradingPostContainer.this.client.isServerClient()) {
-                    objectEntity.addIncomingTrade(tradeId);
-                    TradeRegistry.getTrade(tradeId).addDestination(getIslandLocation());
+                if (client.isServerClient()) {
+                    TradeRegistry.removeTrade(tradeId, objectEntity);
                 }
             }
         });
 
-        this.unsubscribeTradeAction = registerAction(new IntCustomAction() {
+        subscribeAction = registerAction(new IntCustomAction() {
             @Override
             protected void run(int tradeId) {
-                if (TradingPostContainer.this.client.isServerClient()) {
-                    objectEntity.removeIncomingTrade(tradeId);
-                    TradeRegistry.getTrade(tradeId).removeDestination(getIslandLocation());
+                if (client.isServerClient()) {
+                    TradeRegistry.subscribe(tradeId, objectEntity);
                 }
             }
         });
-    }
 
-    public Point getIslandLocation() {
-        return new Point(objectEntity.getLevel().getIdentifier().getIslandX(),
-                objectEntity.getLevel().getIdentifier().getIslandY());
+        unsubscribeAction = registerAction(new IntCustomAction() {
+            @Override
+            protected void run(int tradeId) {
+                if (client.isServerClient()) {
+                    TradeRegistry.unsubscribe(tradeId, objectEntity);
+                }
+            }
+        });
+
+        openAvailableTradesAction = registerAction(new EmptyCustomAction() {
+            @Override
+            protected void run() {
+                if (client.isServerClient()) {
+                    TradeRegistry.updateAvailableTrades(objectEntity);
+                }
+            }
+        });
     }
 }

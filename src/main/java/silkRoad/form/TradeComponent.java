@@ -24,15 +24,15 @@ public class TradeComponent extends FormContentBox {
     public TradeComponent(int x, int y, Trade trade, Type type) {
         super(x, y, 148, 32);
         exportComponent = addComponent(new FormItemIconBackground(type == Type.OUTGOING ? 0 : 64, 0,
-                () -> trade.getExportItem()));
+                () -> trade.exportItem));
         addComponent(new ArrowComponent(32, 0));
         importComponent = addComponent(new FormItemIconBackground(type == Type.OUTGOING ? 64 : 0, 0,
-                () -> trade.getImportItem()));
+                () -> trade.importItem));
     }
 
     public void setTrade(Trade trade) {
-        exportComponent.setItemSupplier(() -> trade.getExportItem());
-        importComponent.setItemSupplier(() -> trade.getImportItem());
+        exportComponent.setItemSupplier(() -> trade.exportItem);
+        importComponent.setItemSupplier(() -> trade.importItem);
     }
 
     public void addCancelButton(Consumer<TradeComponent> listener) {

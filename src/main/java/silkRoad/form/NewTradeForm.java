@@ -19,22 +19,22 @@ public class NewTradeForm extends Form {
 
     public NewTradeForm(Client client, TradingPostContainer container) {
         super(WIDTH, HEIGHT);
-        trade = new Trade(container.getIslandLocation());
+        trade = new Trade();
 
         addComponent(new FormLocalLabel("ui", "addtrade", new FontOptions(20),
                 FormLocalLabel.ALIGN_LEFT, 4, 4, WIDTH - 8));
 
         TradeComponent tradeComponent = addComponent(new TradeComponent(4, 36, trade));
         tradeComponent.exportComponent.onClicked(e -> {
-            getManager().openFloatMenu(new ItemsFloatMenu(client, this,
-                    NewTradeForm.this.trade.getExportItem(), item -> {
-                        NewTradeForm.this.trade.setExportItem(item);
+            getManager().openFloatMenu(
+                    new ItemsFloatMenu(client, this, NewTradeForm.this.trade.exportItem, item -> {
+                        NewTradeForm.this.trade.exportItem = item;
                     }));
         });
         tradeComponent.importComponent.onClicked(e -> {
-            getManager().openFloatMenu(new ItemsFloatMenu(client, this,
-                    NewTradeForm.this.trade.getImportItem(), item -> {
-                        NewTradeForm.this.trade.setImportItem(item);
+            getManager().openFloatMenu(
+                    new ItemsFloatMenu(client, this, NewTradeForm.this.trade.importItem, item -> {
+                        NewTradeForm.this.trade.importItem = item;
                     }));
         });
 

@@ -147,8 +147,9 @@ public class TradingPostObject extends GameObject {
 
     @Override
     public void interact(Level level, int x, int y, PlayerMob player) {
-        if (level.isServerLevel())
+        if (level.isServerLevel()) {
             TradingPostContainer.openAndSendContainer(SilkRoad.TRADING_POST_CONTAINER,
-                    player.getServerClient(), level, x, y);
+                    player.getServerClient(), level, x, y, null);
+        }
     }
 }

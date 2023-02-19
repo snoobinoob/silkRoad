@@ -1,81 +1,94 @@
 package silkRoad;
 
-import java.awt.Point;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
-import necesse.engine.GameLog;
+import java.util.stream.Collectors;
 import necesse.engine.save.LoadData;
 import necesse.engine.save.SaveData;
+import silkRoad.tradingPost.TradingPostObjectEntity;
 
 public class TradeRegistry {
     private static int nextId = 0;
-    private static Map<Integer, Trade> tradeMap = new HashMap<>();
-
-    private static List<Runnable> listeners = new ArrayList<>();
+    private static Map<Integer, TradeMetadata> tradeMap = new HashMap<>();
 
     public static void init() {
         nextId = 0;
         tradeMap = new HashMap<>();
-        listeners = new ArrayList<>();
-    }
-
-    public static void onTradesModified(Runnable listener) {
-        listeners.add(listener);
-    }
-
-    private static void notifyListeners() {
-        for (Runnable listener : listeners) {
-            listener.run();
-        }
-    }
-
-    public static int register(Trade trade) {
-        tradeMap.put(nextId, trade);
-        trade.setId(nextId);
-        notifyListeners();
-        return nextId++;
     }
 
     public static Trade getTrade(int id) {
-        return tradeMap.get(id);
+        TradeMetadata tradeData = tradeMap.get(id);
+        return tradeData == null ? null : tradeData.trade;
     }
 
-    public static void removeTrade(int id) {
-        tradeMap.remove(id);
-        notifyListeners();
+    public static Collection<TradeMetadata> allTrades() {
+        return tradeMap.values();
     }
 
-    public static Stream<Trade> getAvailableTrades(Point location) {
-        return tradeMap.values().stream().filter(trade -> {
-            return !trade.isSourcedBy(location);
-        });
+    public static int register(Trade trade, TradingPostObjectEntity source) {
+        tradeMap.put(nextId, new TradeMetadata(trade, source));
+        trade.id = nextId;
+        source.trades.addOutgoingTrade(trade);
+        return nextId++;
     }
 
-    public static void addSaveData(SaveData save) {
-        SaveData data = new SaveData("TRADES");
-        data.addInt("nextid", nextId);
-        for (Trade trade : tradeMap.values()) {
-            SaveData tradeData = new SaveData("TRADE");
-            trade.addSaveData(tradeData);
-            data.addSaveData(tradeData);
-        }
-        save.addSaveData(data);
-    }
+    public static void removeTrade(int id, TradingPostObjectEntity source) {
+        TradeMetadata tradeData = tradeMap.get(id);
+        if (tradeData != null) {
+            source.trades.removeOutgoingTrade(tradeData.trade);
 
-    public static void applyLoadData(LoadData save) {
-        LoadData data = save.getFirstLoadDataByName("TRADES");
-        if (data == null) {
-            GameLog.warn.println("Could not load trades");
-        } else {
-            nextId = data.getInt("nextid");
-            for (LoadData tradeData : data.getLoadDataByName("TRADE")) {
-                Trade trade = Trade.fromLoadData(tradeData);
-                tradeMap.put(trade.getId(), trade);
+            List<Location> destinations = tradeData.destinations.stream().toList();
+            for (Location destination : destinations) {
+                SilkRoad.broker.unsubscribeLocation(id, destination);
             }
+
+            tradeMap.remove(id);
         }
-        notifyListeners();
+    }
+
+    public static void subscribe(int id, TradingPostObjectEntity subscriber) {
+        TradeMetadata tradeData = tradeMap.get(id);
+        if (tradeData != null) {
+            tradeData.destinations.add(new Location(subscriber));
+            subscriber.trades.addIncomingTrade(tradeData.trade);
+        }
+    }
+
+    public static void unsubscribe(int id, TradingPostObjectEntity subscriber) {
+        TradeMetadata tradeData = tradeMap.get(id);
+        if (tradeData != null) {
+            tradeData.destinations.remove(new Location(subscriber));
+            subscriber.trades.removeIncomingTrade(tradeData.trade);
+        }
+    }
+
+    public static void updateAvailableTrades(TradingPostObjectEntity oe) {
+        Location oeLocation = new Location(oe);
+        oe.trades.availableTrades.clear();
+        oe.trades.availableTrades
+                .addAll(tradeMap.values().stream().filter(t -> !t.source.equals(oeLocation))
+                        .map(t -> t.trade).collect(Collectors.toList()));
+        oe.trades.markDirty();
+    }
+
+    public static SaveData getSave() {
+        SaveData save = new SaveData("TRADES");
+        save.addInt("nextid", nextId);
+        for (TradeMetadata tradeData : tradeMap.values()) {
+            SaveData tradeSaveData = new SaveData("TRADE");
+            tradeData.addSaveData(tradeSaveData);
+            save.addSaveData(tradeSaveData);
+        }
+        return save;
+    }
+
+    public static void loadSave(LoadData save) {
+        nextId = save.getInt("nextid");
+        for (LoadData tradeLoadData : save.getLoadDataByName("TRADE")) {
+            TradeMetadata tradeData = TradeMetadata.fromLoadData(tradeLoadData);
+            tradeMap.put(tradeData.trade.id, tradeData);
+        }
     }
 }

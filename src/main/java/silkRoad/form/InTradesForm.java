@@ -13,6 +13,7 @@ import silkRoad.tradingPost.TradingPostContainer;
 public class InTradesForm extends Form {
     private TradingPostContainer container;
     private FormLocalTextButton acceptTradeButton;
+    private TradeComponentList list;
 
     public InTradesForm(Client client, TradingPostContainer container) {
         super(156, 198);
@@ -21,19 +22,24 @@ public class InTradesForm extends Form {
         acceptTradeButton = addComponent(new FormLocalTextButton("ui", "acceptTrade", 4, 4,
                 getWidth() - 8, FormInputSize.SIZE_24, ButtonColor.BASE));
         acceptTradeButton.onClicked(e -> {
+            container.openAvailableTradesAction.runAndSend();
             AvailableTradesFloatMenu menu = new AvailableTradesFloatMenu(this, container);
             getManager().openFloatMenu(menu);
         });
         acceptTradeButton.setCooldown(100);
-        addComponent(new TradeComponentList(container.objectEntity.getIncomingTradeIds(), 4, 32,
-                getWidth() - 8, getHeight() - 36, TradeComponent.Type.INCOMING,
-                tradeId -> container.unsubscribeTradeAction.runAndSend(tradeId)));
+        list = addComponent(new TradeComponentList(container.objectEntity.trades.incomingTrades, 4,
+                32, getWidth() - 8, getHeight() - 36, TradeComponent.Type.INCOMING,
+                tradeId -> container.unsubscribeAction.runAndSend(tradeId)));
     }
 
     @Override
     public void draw(TickManager tickManager, PlayerMob perspective, Rectangle renderBox) {
         acceptTradeButton.setActive(container.settlementObjectManager.foundSettlement);
         super.draw(tickManager, perspective, renderBox);
+    }
+
+    public void update() {
+        list.updateTradeComponents();
     }
 }
 
