@@ -1,0 +1,9 @@
+[object]
+tradingpost=Trading Post
+
+[ui]
+acceptTrade=Accept Trade
+addtrade=Add Trade
+amount=Amount
+newtrade=New Trade
+create=Create
