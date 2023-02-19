@@ -4,7 +4,6 @@ import necesse.engine.modLoader.annotations.ModEntry;
 import necesse.engine.network.NetworkClient;
 import necesse.engine.network.PacketReader;
 import necesse.engine.registries.ContainerRegistry;
-import necesse.engine.registries.ObjectRegistry;
 import necesse.engine.registries.RecipeTechRegistry;
 import necesse.inventory.recipe.Ingredient;
 import necesse.inventory.recipe.Recipe;
@@ -21,7 +20,7 @@ public class SilkRoad {
     public void init() {
         System.out.println("Hello world from Silk Road!");
 
-        ObjectRegistry.registerObject("tradingpost", new TradingPostObject(), 100, true);
+        TradingPostObject.registerTradingPost();
 
         TRADING_POST_CONTAINER = ContainerRegistry.registerOEContainer(
                 (client, uniqueSeed, oe, content) -> new TradingPostForm(client,
