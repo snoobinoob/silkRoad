@@ -1,0 +1,11 @@
+# IDE files
+.vscode
+bin
+
+# Build files
+build
+.gradle
+
+# Project specific
+steam_appid.txt
+latest-crash.log
