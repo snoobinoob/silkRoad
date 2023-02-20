@@ -4,9 +4,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import necesse.engine.save.LoadData;
 import necesse.engine.save.SaveData;
+import silkRoad.packet.PacketAddTrade;
+import silkRoad.packet.PacketRemoveTrade;
 import silkRoad.tradingPost.TradingPostObjectEntity;
 
 public class TradeRegistry {
@@ -31,10 +32,12 @@ public class TradeRegistry {
         tradeMap.put(nextId, new TradeMetadata(trade, source));
         trade.id = nextId;
         source.trades.addOutgoingTrade(trade);
+        source.getLevel().getServer().network
+                .sendToAllClients(new PacketAddTrade(trade, new Location(source)));
         return nextId++;
     }
 
-    public static void removeTrade(int id, TradingPostObjectEntity source) {
+    public static Trade removeTrade(int id, TradingPostObjectEntity source) {
         TradeMetadata tradeData = tradeMap.get(id);
         if (tradeData != null) {
             source.trades.removeOutgoingTrade(tradeData.trade);
@@ -45,7 +48,11 @@ public class TradeRegistry {
             }
 
             tradeMap.remove(id);
+
+            source.getLevel().getServer().network
+                    .sendToAllClients(new PacketRemoveTrade(tradeData.trade, new Location(source)));
         }
+        return tradeData == null ? null : tradeData.trade;
     }
 
     public static void subscribe(int id, TradingPostObjectEntity subscriber) {
@@ -64,13 +71,11 @@ public class TradeRegistry {
         }
     }
 
-    public static void updateAvailableTrades(TradingPostObjectEntity oe) {
+    public static List<Trade> getAvailableTrades(TradingPostObjectEntity oe) {
         Location oeLocation = new Location(oe);
-        oe.trades.availableTrades.clear();
-        oe.trades.availableTrades
-                .addAll(tradeMap.values().stream().filter(t -> !t.source.equals(oeLocation))
-                        .map(t -> t.trade).collect(Collectors.toList()));
-        oe.trades.markDirty();
+        return SilkRoad.clientTrades.stream().filter(t -> {
+            return !oeLocation.equals(t.source) && !oe.trades.incomingTrades.contains(t.trade);
+        }).map(t -> t.trade).toList();
     }
 
     public static SaveData getSave() {

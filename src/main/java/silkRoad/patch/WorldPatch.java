@@ -9,14 +9,6 @@ import silkRoad.SilkRoad;
 import silkRoad.TradeRegistry;
 
 public class WorldPatch {
-    @ModMethodPatch(target = World.class, name = "init", arguments = {})
-    public static class initPatch {
-        @Advice.OnMethodExit
-        public static void onExit(@Advice.This World world) {
-            SilkRoad.broker.init(world);
-        }
-    }
-
     @ModMethodPatch(target = World.class, name = "serverTick", arguments = {})
     public static class serverTickPatch {
         @Advice.OnMethodExit

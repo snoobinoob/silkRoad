@@ -15,10 +15,19 @@ public class TradeMetadata {
         this(trade, new Location(oe));
     }
 
-    private TradeMetadata(Trade trade, Location source) {
+    public TradeMetadata(Trade trade, Location source) {
         this.trade = trade;
         this.source = source;
         this.destinations = new ArrayList<>();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof TradeMetadata)) {
+            return false;
+        }
+        TradeMetadata other = (TradeMetadata) obj;
+        return trade.id == other.trade.id;
     }
 
     public void addSaveData(SaveData save) {

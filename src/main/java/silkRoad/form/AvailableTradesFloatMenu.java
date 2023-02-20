@@ -2,6 +2,7 @@ package silkRoad.form;
 
 import necesse.gfx.forms.Form;
 import necesse.gfx.forms.floatMenu.FormFloatMenu;
+import silkRoad.TradeRegistry;
 import silkRoad.tradingPost.TradingPostContainer;
 
 public class AvailableTradesFloatMenu extends FormFloatMenu {
@@ -16,9 +17,9 @@ public class AvailableTradesFloatMenu extends FormFloatMenu {
 
         this.container = container;
 
-        TradeComponentList list = form
-                .addComponent(new TradeComponentList(container.objectEntity.trades.availableTrades,
-                        0, 0, WIDTH, HEIGHT, TradeComponent.Type.INCOMING, tradeId -> {
+        TradeComponentList list = form.addComponent(
+                new TradeComponentList(TradeRegistry.getAvailableTrades(container.objectEntity), 0,
+                        0, WIDTH, HEIGHT, TradeComponent.Type.INCOMING, tradeId -> {
                             container.subscribeAction.runAndSend(tradeId);
                             remove();
                         }));

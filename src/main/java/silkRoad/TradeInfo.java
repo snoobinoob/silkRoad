@@ -14,7 +14,6 @@ import silkRoad.tradingPost.TradingPostObjectEntity;
 public class TradeInfo {
     public List<Trade> incomingTrades;
     public List<Trade> outgoingTrades;
-    public List<Trade> availableTrades;
 
     private boolean dirty;
     private Map<Integer, Runnable> listeners;
@@ -22,7 +21,6 @@ public class TradeInfo {
     public TradeInfo() {
         incomingTrades = new ArrayList<>();
         outgoingTrades = new ArrayList<>();
-        availableTrades = new ArrayList<>();
 
         listeners = new HashMap<>();
     }
@@ -98,19 +96,17 @@ public class TradeInfo {
     public void writeContent(PacketWriter writer) {
         writeTradeList(writer, incomingTrades);
         writeTradeList(writer, outgoingTrades);
-        writeTradeList(writer, availableTrades);
     }
 
     public void readContent(PacketReader reader) {
         readTradeList(reader, incomingTrades);
         readTradeList(reader, outgoingTrades);
-        readTradeList(reader, availableTrades);
     }
 
     private void writeTradeList(PacketWriter writer, List<Trade> list) {
         writer.putNextInt(list.size());
         for (Trade trade : list) {
-            writer.putNextContentPacket(trade.getContentPacket());
+            trade.writePacket(writer);
         }
     }
 
@@ -118,7 +114,7 @@ public class TradeInfo {
         list.clear();
         int numItems = reader.getNextInt();
         for (int i = 0; i < numItems; i++) {
-            list.add(Trade.fromPacket(new PacketReader(reader.getNextContentPacket())));
+            list.add(Trade.readPacket(reader));
         }
     }
 

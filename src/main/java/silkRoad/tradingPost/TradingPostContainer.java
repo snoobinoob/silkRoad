@@ -2,7 +2,6 @@ package silkRoad.tradingPost;
 
 import necesse.engine.network.NetworkClient;
 import necesse.engine.network.PacketReader;
-import necesse.inventory.container.customAction.EmptyCustomAction;
 import necesse.inventory.container.customAction.IntCustomAction;
 import necesse.inventory.container.object.OEInventoryContainer;
 import silkRoad.Trade;
@@ -16,7 +15,6 @@ public class TradingPostContainer extends OEInventoryContainer {
     public IntCustomAction removeTradeAction;
     public IntCustomAction subscribeAction;
     public IntCustomAction unsubscribeAction;
-    public EmptyCustomAction openAvailableTradesAction;
 
     public TradingPostContainer(NetworkClient client, int uniqueSeed, TradingPostObjectEntity oe,
             PacketReader reader) {
@@ -55,15 +53,6 @@ public class TradingPostContainer extends OEInventoryContainer {
             protected void run(int tradeId) {
                 if (client.isServerClient()) {
                     TradeRegistry.unsubscribe(tradeId, objectEntity);
-                }
-            }
-        });
-
-        openAvailableTradesAction = registerAction(new EmptyCustomAction() {
-            @Override
-            protected void run() {
-                if (client.isServerClient()) {
-                    TradeRegistry.updateAvailableTrades(objectEntity);
                 }
             }
         });

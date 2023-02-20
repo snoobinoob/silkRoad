@@ -1,6 +1,5 @@
 package silkRoad;
 
-import necesse.engine.network.Packet;
 import necesse.engine.network.PacketReader;
 import necesse.engine.network.PacketWriter;
 import necesse.engine.save.LoadData;
@@ -47,18 +46,15 @@ public class Trade {
         return trade;
     }
 
-    public Packet getContentPacket() {
-        Packet content = new Packet();
-        PacketWriter writer = new PacketWriter(content);
+    public void writePacket(PacketWriter writer) {
         writer.putNextInt(id);
         writer.putNextString(exportItem.item.getStringID());
         writer.putNextInt(exportItem.getAmount());
         writer.putNextString(importItem.item.getStringID());
         writer.putNextInt(importItem.getAmount());
-        return content;
     }
 
-    public static Trade fromPacket(PacketReader reader) {
+    public static Trade readPacket(PacketReader reader) {
         int id = reader.getNextInt();
         String exportItem = reader.getNextString();
         int exportAmount = reader.getNextInt();

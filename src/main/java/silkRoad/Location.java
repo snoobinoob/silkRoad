@@ -1,6 +1,8 @@
 package silkRoad;
 
 import java.awt.Point;
+import necesse.engine.network.PacketReader;
+import necesse.engine.network.PacketWriter;
 import necesse.engine.save.LoadData;
 import necesse.engine.save.SaveData;
 import necesse.entity.objectEntity.ObjectEntity;
@@ -29,6 +31,21 @@ public class Location {
 
     public int getTileY() {
         return tilePoint.y;
+    }
+
+    public void writePacket(PacketWriter writer) {
+        writer.putNextInt(islandPoint.x);
+        writer.putNextInt(islandPoint.y);
+        writer.putNextInt(tilePoint.x);
+        writer.putNextInt(tilePoint.y);
+    }
+
+    public static Location readPacket(PacketReader reader) {
+        int islandX = reader.getNextInt();
+        int islandY = reader.getNextInt();
+        int tileX = reader.getNextInt();
+        int tileY = reader.getNextInt();
+        return new Location(new Point(islandX, islandY), new Point(tileX, tileY));
     }
 
     public void addSaveData(SaveData save) {

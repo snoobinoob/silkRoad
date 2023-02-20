@@ -22,7 +22,6 @@ public class InTradesForm extends Form {
         acceptTradeButton = addComponent(new FormLocalTextButton("ui", "acceptTrade", 4, 4,
                 getWidth() - 8, FormInputSize.SIZE_24, ButtonColor.BASE));
         acceptTradeButton.onClicked(e -> {
-            container.openAvailableTradesAction.runAndSend();
             AvailableTradesFloatMenu menu = new AvailableTradesFloatMenu(this, container);
             getManager().openFloatMenu(menu);
         });
