@@ -1,12 +1,12 @@
 package silkRoad.form;
 
 import java.util.function.Consumer;
-import necesse.engine.Settings;
 import necesse.engine.localization.message.GameMessage;
 import necesse.gfx.forms.components.FormContentBox;
 import necesse.gfx.forms.components.FormContentIconButton;
 import necesse.gfx.forms.components.FormInputSize;
 import necesse.gfx.ui.ButtonColor;
+import necesse.gfx.ui.ButtonIcon;
 import silkRoad.Trade;
 
 public class TradeComponent extends FormContentBox {
@@ -35,10 +35,11 @@ public class TradeComponent extends FormContentBox {
         importComponent.setItemSupplier(() -> trade.importItem);
     }
 
-    public void addCancelButton(Consumer<TradeComponent> listener) {
-        FormContentIconButton cancelButton = addComponent(
-                new FormContentIconButton(this.getWidth() - 32, 0, FormInputSize.SIZE_20,
-                        ButtonColor.BASE, Settings.UI.button_escaped_20, new GameMessage[0]));
+    public void addButton(Consumer<TradeComponent> listener, ButtonIcon buttonIcon,
+            GameMessage... tooltips) {
+        FormContentIconButton cancelButton =
+                addComponent(new FormContentIconButton(this.getWidth() - 42, 6,
+                        FormInputSize.SIZE_20, ButtonColor.BASE, buttonIcon, tooltips));
         cancelButton.onClicked(e -> listener.accept(this));
     }
 }

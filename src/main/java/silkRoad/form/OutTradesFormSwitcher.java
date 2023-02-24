@@ -17,7 +17,7 @@ public class OutTradesFormSwitcher extends FormSwitcher {
         outTradesForm.addTradeButton.onClicked(e -> makeCurrent(newTradeForm));
         outTradesForm.addTradeButton.setCooldown(500);
 
-        // newTradeForm.cancelButton.onClicked(e -> makeCurrent(outTradesForm));
+        newTradeForm.cancelButton.onClicked(e -> makeCurrent(outTradesForm));
         newTradeForm.acceptButton.onClicked(e -> makeCurrent(outTradesForm));
     }
 

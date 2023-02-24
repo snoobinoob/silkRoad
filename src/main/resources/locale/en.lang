@@ -2,8 +2,12 @@
 tradingpost=Trading Post
 
 [ui]
-acceptTrade=Accept Trade
+browsetrades=Browse Trades
 addtrade=Add Trade
-amount=Amount
 newtrade=New Trade
 create=Create
+deletetrade=Delete
+subscribetrade=Subscribe
+unsubscribetrade=Unsubscribe
+clearitem=Clear Item
+empty=Empty

@@ -63,12 +63,12 @@ public class TradeBroker {
             boolean srcHasSpace = inventoryHasSpace(srcInv, tradeData.trade.importItem);
             boolean dstHasSpace = inventoryHasSpace(srcInv, tradeData.trade.exportItem);
             if (srcHasSpace && dstHasSpace) {
-                addItems(srcInv, tradeData.trade.importItem.copy());
-                addItems(dstInv, tradeData.trade.exportItem.copy());
+                addItems(srcInv, tradeData.trade.importItem);
+                addItems(dstInv, tradeData.trade.exportItem);
                 break;
             } else {
-                addItems(srcInv, tradeData.trade.exportItem.copy());
-                addItems(dstInv, tradeData.trade.importItem.copy());
+                addItems(srcInv, tradeData.trade.exportItem);
+                addItems(dstInv, tradeData.trade.importItem);
             }
         }
     }
@@ -92,18 +92,22 @@ public class TradeBroker {
     }
 
     private boolean inventoryHasItems(Inventory inv, InventoryItem item) {
-        return inv.getAmount(null, null, item.item, "count") >= item.getAmount();
+        return item == null || inv.getAmount(null, null, item.item, "count") >= item.getAmount();
     }
 
     private void removeItems(Inventory inv, InventoryItem item) {
-        inv.removeItems(null, null, item.item, item.getAmount(), "trade");
+        if (item != null) {
+            inv.removeItems(null, null, item.item, item.getAmount(), "trade");
+        }
     }
 
     private boolean inventoryHasSpace(Inventory inv, InventoryItem item) {
-        return inv.canAddItem(null, null, item, "trade") == item.getAmount();
+        return item == null || inv.canAddItem(null, null, item, "trade") == item.getAmount();
     }
 
     private void addItems(Inventory inv, InventoryItem item) {
-        inv.addItem(null, null, item, "trade", null);
+        if (item != null) {
+            inv.addItem(null, null, item.copy(), "trade", null);
+        }
     }
 }

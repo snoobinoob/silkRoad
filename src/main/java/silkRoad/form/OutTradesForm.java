@@ -1,6 +1,7 @@
 package silkRoad.form;
 
 import java.awt.Rectangle;
+import necesse.engine.localization.message.LocalMessage;
 import necesse.engine.network.client.Client;
 import necesse.engine.tickManager.TickManager;
 import necesse.entity.mobs.PlayerMob;
@@ -24,7 +25,7 @@ public class OutTradesForm extends Form {
         list = addComponent(new TradeComponentList(container.objectEntity.trades.outgoingTrades, 4,
                 32, getWidth() - 8, getHeight() - 36, TradeComponent.Type.OUTGOING, tradeId -> {
                     container.removeTradeAction.runAndSend(tradeId);
-                }));
+                }, new LocalMessage("ui", "deletetrade")));
     }
 
     @Override

@@ -1,6 +1,9 @@
 package silkRoad.form;
 
+import java.awt.Rectangle;
 import necesse.engine.network.client.Client;
+import necesse.engine.tickManager.TickManager;
+import necesse.entity.mobs.PlayerMob;
 import necesse.gfx.forms.Form;
 import necesse.gfx.forms.components.FormInputSize;
 import necesse.gfx.forms.components.localComponents.FormLocalLabel;
@@ -12,35 +15,46 @@ import silkRoad.tradingPost.TradingPostContainer;
 
 public class NewTradeForm extends Form {
     private static final int WIDTH = 156;
-    private static final int HEIGHT = 100;
+    private static final int HEIGHT = 198;
 
-    private Trade trade;
     public FormLocalTextButton acceptButton;
+    public FormLocalTextButton cancelButton;
+
+    private TradeItemEditComponent exportComponent;
+    private TradeItemEditComponent importComponent;
 
     public NewTradeForm(Client client, TradingPostContainer container) {
         super(WIDTH, HEIGHT);
-        trade = new Trade();
 
         addComponent(new FormLocalLabel("ui", "addtrade", new FontOptions(20),
-                FormLocalLabel.ALIGN_LEFT, 4, 4, WIDTH - 8));
+                FormLocalLabel.ALIGN_MID, WIDTH / 2, 4, WIDTH - 8));
 
-        TradeComponent tradeComponent = addComponent(new TradeComponent(4, 36, trade));
-        tradeComponent.exportComponent.onClicked(e -> {
-            getManager().openFloatMenu(
-                    new ItemsFloatMenu(client, this, NewTradeForm.this.trade.exportItem, item -> {
-                        NewTradeForm.this.trade.exportItem = item;
-                    }));
-        });
-        tradeComponent.importComponent.onClicked(e -> {
-            getManager().openFloatMenu(
-                    new ItemsFloatMenu(client, this, NewTradeForm.this.trade.importItem, item -> {
-                        NewTradeForm.this.trade.importItem = item;
-                    }));
+        exportComponent = addComponent(new TradeItemEditComponent(0, 35, client));
+        addComponent(new ArrowComponent(4, 67, 180));
+        importComponent = addComponent(new TradeItemEditComponent(0, 99, client));
+
+        acceptButton = addComponent(new FormLocalTextButton("ui", "create", 4, HEIGHT - 56,
+                WIDTH - 8, FormInputSize.SIZE_24, ButtonColor.BASE));
+        acceptButton.onClicked(e -> {
+            Trade trade = new Trade(exportComponent.item, exportComponent.amount,
+                    importComponent.item, importComponent.amount);
+            container.addTradeAction.runAndSend(trade);
         });
 
-        acceptButton = addComponent(new FormLocalTextButton("ui", "acceptbutton", 4, HEIGHT - 32,
-                WIDTH - 8, FormInputSize.SIZE_20, ButtonColor.BASE));
-        acceptButton.onClicked(e -> container.addTradeAction.runAndSend(NewTradeForm.this.trade));
+        cancelButton = addComponent(new FormLocalTextButton("ui", "cancelbutton", 4, HEIGHT - 28,
+                WIDTH - 8, FormInputSize.SIZE_24, ButtonColor.BASE));
     }
 
+    @Override
+    public void draw(TickManager tickManager, PlayerMob perspective, Rectangle renderBox) {
+        boolean tradeValid = true;
+        if (exportComponent.item == null && importComponent.item == null) {
+            tradeValid = false;
+        } else if ((exportComponent.item != null && exportComponent.amount == 0)
+                || (importComponent.item != null && importComponent.amount == 0)) {
+            tradeValid = false;
+        }
+        acceptButton.setActive(tradeValid);
+        super.draw(tickManager, perspective, renderBox);
+    }
 }

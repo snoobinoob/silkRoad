@@ -11,6 +11,7 @@ import necesse.engine.network.PacketReader;
 import necesse.engine.registries.ContainerRegistry;
 import necesse.engine.registries.PacketRegistry;
 import necesse.engine.registries.RecipeTechRegistry;
+import necesse.gfx.ui.ButtonIcon;
 import necesse.inventory.recipe.Ingredient;
 import necesse.inventory.recipe.Recipe;
 import necesse.inventory.recipe.Recipes;
@@ -30,6 +31,8 @@ public class SilkRoad {
     public static int TRADE_LIST_CONNECTION_PACKET;
     public static int ADD_TRADE_PACKET;
     public static int REMOVE_TRADE_PACKET;
+
+    public static ButtonIcon addButtonIcon;
 
     public static Settings settings;
     public static TradeBroker broker;
@@ -72,6 +75,10 @@ public class SilkRoad {
             }
         });
 
+    }
+
+    public void initResources() {
+        addButtonIcon = new ButtonIcon(necesse.engine.Settings.UI, "button_add_20", false);
     }
 
     public Settings initSettings() {
