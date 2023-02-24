@@ -21,9 +21,9 @@ import necesse.level.maps.multiTile.SideMultiTile;
 import silkRoad.SilkRoad;
 
 class TradingPost2Object extends GameObject {
-    public GameTexture texture;
-
     protected int otherId;
+
+    public GameTexture texture;
 
     protected TradingPost2Object() {
         super(new Rectangle(32, 32));
@@ -76,16 +76,17 @@ class TradingPost2Object extends GameObject {
             options.add(texture.initDraw().sprite(0, 1, 32).light(light).pos(drawX, drawY));
         }
         list.add(new LevelSortedDrawable(this, tileX, tileY) {
+            @Override
             public int getSortY() {
                 return 16;
             }
 
+            @Override
             public void draw(TickManager tickManager) {
                 options.draw();
             }
         });
     }
-
 
     @Override
     public String getInteractTip(Level level, int x, int y, PlayerMob perspective, boolean debug) {

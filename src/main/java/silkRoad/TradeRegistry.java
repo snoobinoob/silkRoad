@@ -2,6 +2,7 @@ package silkRoad;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import necesse.engine.save.LoadData;
@@ -13,10 +14,12 @@ import silkRoad.tradingPost.TradingPostObjectEntity;
 public class TradeRegistry {
     private static int nextId = 0;
     private static Map<Integer, TradeMetadata> tradeMap = new HashMap<>();
+    private static List<TradeMetadata> clientTrades = new LinkedList<>();
 
     public static void init() {
         nextId = 0;
         tradeMap = new HashMap<>();
+        clientTrades = new LinkedList<>(); // Note: Destination data never filled
     }
 
     public static Trade getTrade(int id) {
@@ -71,9 +74,21 @@ public class TradeRegistry {
         }
     }
 
+    public static void setClientTrades(List<TradeMetadata> trades) {
+        clientTrades = trades;
+    }
+
+    public static void addClientTrade(TradeMetadata trade) {
+        clientTrades.add(trade);
+    }
+
+    public static void removeClientTrade(TradeMetadata trade) {
+        clientTrades.remove(trade);
+    }
+
     public static List<Trade> getAvailableTrades(TradingPostObjectEntity oe) {
         Location oeLocation = new Location(oe);
-        return SilkRoad.clientTrades.stream().filter(t -> {
+        return clientTrades.stream().filter(t -> {
             if (SilkRoad.settings.maxTradeDistance >= 0
                     && oeLocation.distanceTo(t.source) > SilkRoad.settings.maxTradeDistance) {
                 return false;

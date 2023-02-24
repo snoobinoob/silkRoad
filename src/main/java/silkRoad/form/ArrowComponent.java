@@ -23,5 +23,4 @@ public class ArrowComponent extends FormCustomDraw {
     public void draw(TickManager tickManager, PlayerMob perspective, Rectangle renderBox) {
         Settings.UI.arrow.initDraw().color(Color.BLACK).rotate(rotation).draw(getX(), getY());
     }
-
 }

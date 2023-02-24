@@ -5,10 +5,10 @@ import necesse.engine.save.LoadData;
 import necesse.engine.save.SaveData;
 
 public class Settings extends ModSettings {
-    public long worldTimePerTrade = 10000; // Milliseconds
+    public long worldTimePerTrade = 10000;
     public int maxOutgoingTrades = 5;
     public int maxIncomingTrades = 5;
-    public int maxTradeDistance = -1; // Number of island hops (-1 for infinite)
+    public int maxTradeDistance = -1;
 
     @Override
     public void addSaveData(SaveData save) {
@@ -28,5 +28,4 @@ public class Settings extends ModSettings {
         maxIncomingTrades = save.getInt("maxincomingtrades");
         maxTradeDistance = save.getInt("maxtradedistance");
     }
-
 }

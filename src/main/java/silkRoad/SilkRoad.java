@@ -1,7 +1,5 @@
 package silkRoad;
 
-import java.util.ArrayList;
-import java.util.List;
 import necesse.engine.GameEventListener;
 import necesse.engine.GameEvents;
 import necesse.engine.events.ServerClientConnectedEvent;
@@ -32,10 +30,6 @@ import silkRoad.tradingPost.TradingPostObjectEntity;
 @ModEntry
 public class SilkRoad {
     public static int TRADING_POST_CONTAINER;
-    public static int TRADE_INFO_PACKET;
-    public static int TRADE_LIST_CONNECTION_PACKET;
-    public static int ADD_TRADE_PACKET;
-    public static int REMOVE_TRADE_PACKET;
 
     public static ButtonIcon addButtonIcon;
     public static ListGameTooltips exportTooltips;
@@ -43,23 +37,11 @@ public class SilkRoad {
 
     public static Settings settings;
     public static TradeBroker broker;
-    public static List<TradeMetadata> clientTrades; // Note: Destination data never filled
 
     public void init() {
         TradingPostObject.registerTradingPost();
 
-        exportTooltips = new ListGameTooltips();
-        exportTooltips.add(new StringTooltips(Localization.translate("ui", "exportitem"),
-                Item.Rarity.RARE.color));
-        exportTooltips.add(new LocalMessage("ui", "exporthelp"));
-
-        importTooltips = new ListGameTooltips();
-        importTooltips.add(new StringTooltips(Localization.translate("ui", "importitem"),
-                Item.Rarity.RARE.color));
-        importTooltips.add(new LocalMessage("ui", "importhelp"));
-
         broker = new TradeBroker();
-        clientTrades = new ArrayList<>();
 
         TRADING_POST_CONTAINER = ContainerRegistry.registerOEContainer(
                 (client, uniqueSeed, oe, content) -> new TradingPostContainerForm(client,
@@ -70,11 +52,10 @@ public class SilkRoad {
                         serverClient, uniqueSeed, (TradingPostObjectEntity) oe,
                         new PacketReader(content)));
 
-        TRADE_INFO_PACKET = PacketRegistry.registerPacket(PacketTradeInfo.class);
-        TRADE_LIST_CONNECTION_PACKET =
-                PacketRegistry.registerPacket(PacketConnectionTradeList.class);
-        ADD_TRADE_PACKET = PacketRegistry.registerPacket(PacketAddTrade.class);
-        REMOVE_TRADE_PACKET = PacketRegistry.registerPacket(PacketRemoveTrade.class);
+        PacketRegistry.registerPacket(PacketTradeInfo.class);
+        PacketRegistry.registerPacket(PacketConnectionTradeList.class);
+        PacketRegistry.registerPacket(PacketAddTrade.class);
+        PacketRegistry.registerPacket(PacketRemoveTrade.class);
 
         GameEvents.addListener(ServerClientConnectedEvent.class,
                 new GameEventListener<ServerClientConnectedEvent>() {
@@ -96,6 +77,16 @@ public class SilkRoad {
 
     public void initResources() {
         addButtonIcon = new ButtonIcon(necesse.engine.Settings.UI, "button_add_20", false);
+
+        exportTooltips = new ListGameTooltips();
+        exportTooltips.add(new StringTooltips(Localization.translate("ui", "exportitem"),
+                Item.Rarity.RARE.color));
+        exportTooltips.add(new LocalMessage("ui", "exporthelp"));
+
+        importTooltips = new ListGameTooltips();
+        importTooltips.add(new StringTooltips(Localization.translate("ui", "importitem"),
+                Item.Rarity.RARE.color));
+        importTooltips.add(new LocalMessage("ui", "importhelp"));
     }
 
     public Settings initSettings() {

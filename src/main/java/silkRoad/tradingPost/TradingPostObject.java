@@ -22,9 +22,9 @@ import necesse.level.maps.multiTile.SideMultiTile;
 import silkRoad.SilkRoad;
 
 public class TradingPostObject extends GameObject {
-    public GameTexture texture;
-
     protected int otherId;
+
+    public GameTexture texture;
 
     public TradingPostObject() {
         super(new Rectangle(4, 4, 24, 24));

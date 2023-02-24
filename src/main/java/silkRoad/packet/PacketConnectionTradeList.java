@@ -3,8 +3,8 @@ package silkRoad.packet;
 import java.util.List;
 import necesse.engine.network.NetworkPacket;
 import necesse.engine.network.client.Client;
-import silkRoad.SilkRoad;
 import silkRoad.TradeMetadata;
+import silkRoad.TradeRegistry;
 
 public class PacketConnectionTradeList extends PacketTradeList {
 
@@ -18,6 +18,6 @@ public class PacketConnectionTradeList extends PacketTradeList {
 
     @Override
     public void processClient(NetworkPacket packet, Client client) {
-        SilkRoad.clientTrades = trades;
+        TradeRegistry.setClientTrades(trades);
     }
 }
