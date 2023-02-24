@@ -32,7 +32,7 @@ public class TradeBroker {
     }
 
     public void unsubscribeLocation(int tradeId, Location location) {
-        TradingPostObjectEntity oe = getTradingPostAt(location);
+        TradingPostObjectEntity oe = getTradingPostAt(location, false);
         if (oe == null) {
             return;
         }
@@ -43,7 +43,7 @@ public class TradeBroker {
         if (tradeData.destinations.size() == 0) {
             return;
         }
-        Inventory srcInv = getInventoryAt(tradeData.source);
+        Inventory srcInv = getInventoryAt(tradeData.source, true);
         if (srcInv == null) {
             return;
         }
@@ -51,7 +51,7 @@ public class TradeBroker {
             return;
         }
         for (Location dstLocation : tradeData.destinations) {
-            Inventory dstInv = getInventoryAt(dstLocation);
+            Inventory dstInv = getInventoryAt(dstLocation, true);
             if (dstInv == null) {
                 continue;
             }
@@ -73,14 +73,14 @@ public class TradeBroker {
         }
     }
 
-    private Inventory getInventoryAt(Location location) {
-        TradingPostObjectEntity oe = getTradingPostAt(location);
+    private Inventory getInventoryAt(Location location, boolean requireSettlement) {
+        TradingPostObjectEntity oe = getTradingPostAt(location, requireSettlement);
         return oe == null ? null : oe.inventory;
     }
 
-    private TradingPostObjectEntity getTradingPostAt(Location location) {
+    private TradingPostObjectEntity getTradingPostAt(Location location, boolean requireSettlement) {
         Level level = world.getLevel(new LevelIdentifier(location.getIslandPoint(), 0));
-        if (!level.settlementLayer.isActive()) {
+        if (requireSettlement && !level.settlementLayer.isActive()) {
             return null;
         }
         ObjectEntity oe =

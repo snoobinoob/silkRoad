@@ -7,6 +7,7 @@ import necesse.gfx.forms.components.FormContentBox;
 import necesse.gfx.forms.components.FormContentIconButton;
 import necesse.gfx.forms.components.FormInputSize;
 import necesse.gfx.forms.components.FormTextInput;
+import necesse.gfx.gameTooltips.ListGameTooltips;
 import necesse.gfx.ui.ButtonColor;
 import necesse.inventory.item.Item;
 
@@ -17,11 +18,12 @@ public class TradeItemEditComponent extends FormContentBox {
     public int amount;
     public Item item;
 
-    public TradeItemEditComponent(int x, int y, Client client) {
+    public TradeItemEditComponent(int x, int y, Client client, ListGameTooltips tooltips) {
         super(x, y, WIDTH, HEIGHT);
 
         FormItemIconBackground itemIcon = addComponent(new FormItemIconBackground(4, 0,
-                () -> item == null ? null : item.getDefaultItem(client.getPlayer(), amount)));
+                () -> item == null ? null : item.getDefaultItem(client.getPlayer(), amount),
+                tooltips));
         FormTextInput amountInput =
                 addComponent(new FormTextInput(42, 0, FormInputSize.SIZE_32, WIDTH - 72, 4));
         amountInput.setText(String.valueOf(amount));

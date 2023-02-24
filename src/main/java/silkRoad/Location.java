@@ -59,6 +59,11 @@ public class Location {
         return new Location(island, tile);
     }
 
+    public int distanceTo(Location other) {
+        return Math.abs(islandPoint.x - other.islandPoint.x)
+                + Math.abs(islandPoint.y - other.islandPoint.y);
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof Location)) {

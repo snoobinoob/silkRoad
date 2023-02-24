@@ -9,6 +9,8 @@ build
 # Project specific
 steam_appid.txt
 latest-crash.log
+hs_err_*.log
+replay_*.log
 
 # GIMP files
 *.xcf

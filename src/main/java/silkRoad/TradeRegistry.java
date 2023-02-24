@@ -74,6 +74,10 @@ public class TradeRegistry {
     public static List<Trade> getAvailableTrades(TradingPostObjectEntity oe) {
         Location oeLocation = new Location(oe);
         return SilkRoad.clientTrades.stream().filter(t -> {
+            if (SilkRoad.settings.maxTradeDistance >= 0
+                    && oeLocation.distanceTo(t.source) > SilkRoad.settings.maxTradeDistance) {
+                return false;
+            }
             return !oeLocation.equals(t.source) && !oe.trades.incomingTrades.contains(t.trade);
         }).map(t -> t.trade).toList();
     }

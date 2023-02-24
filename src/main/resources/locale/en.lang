@@ -11,3 +11,7 @@ subscribetrade=Subscribe
 unsubscribetrade=Unsubscribe
 clearitem=Clear Item
 empty=Empty
+exportitem=Export Item
+exporthelp=Sent to trading posts
+importitem=Import Item
+importhelp=Received from trading posts

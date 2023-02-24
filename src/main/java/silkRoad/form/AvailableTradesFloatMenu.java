@@ -31,7 +31,8 @@ public class AvailableTradesFloatMenu extends FormFloatMenu {
                         32, WIDTH - 8, HEIGHT - 36, TradeComponent.Type.INCOMING, tradeId -> {
                             container.subscribeAction.runAndSend(tradeId);
                             remove();
-                        }, SilkRoad.addButtonIcon, new LocalMessage("ui", "subscribetrade")));
+                        }, SilkRoad.addButtonIcon, () -> container.canAddIncoming(),
+                        new LocalMessage("ui", "subscribetrade")));
 
         container.objectEntity.trades.onChanged(hashCode(),
                 () -> list.updateTradeComponents(filterInput.getText()));

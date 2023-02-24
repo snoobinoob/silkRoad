@@ -3,7 +3,7 @@ package silkRoad.form;
 import java.awt.Rectangle;
 import java.util.List;
 import java.util.function.Consumer;
-import necesse.engine.Settings;
+import java.util.function.Supplier;
 import necesse.engine.localization.message.GameMessage;
 import necesse.engine.util.GameMath;
 import necesse.gfx.forms.components.FormContentBox;
@@ -18,31 +18,28 @@ public class TradeComponentList extends FormContentBox {
     private TradeComponent.Type tradeType;
     private Consumer<Integer> tradeRemovalListener;
     private ButtonIcon buttonIcon;
+    private Supplier<Boolean> canClickButton;
     private GameMessage[] removeButtonTooltips;
 
     public TradeComponentList(List<Trade> trades, int x, int y, int width, int height,
             TradeComponent.Type tradeType, Consumer<Integer> tradeRemovalListener,
+            ButtonIcon buttonIcon, Supplier<Boolean> canClickButton,
             GameMessage... removeButtonTooltips) {
         this(trades, x, y, width, height, tradeType, tradeRemovalListener,
-                new Rectangle(0, 0, width, height), Settings.UI.button_escaped_20,
+                new Rectangle(0, 0, width, height), buttonIcon, canClickButton,
                 removeButtonTooltips);
     }
 
     public TradeComponentList(List<Trade> trades, int x, int y, int width, int height,
             TradeComponent.Type tradeType, Consumer<Integer> tradeRemovalListener,
-            ButtonIcon buttonIcon, GameMessage... removeButtonTooltips) {
-        this(trades, x, y, width, height, tradeType, tradeRemovalListener,
-                new Rectangle(0, 0, width, height), buttonIcon, removeButtonTooltips);
-    }
-
-    public TradeComponentList(List<Trade> trades, int x, int y, int width, int height,
-            TradeComponent.Type tradeType, Consumer<Integer> tradeRemovalListener,
-            Rectangle contentRect, ButtonIcon buttonIcon, GameMessage... removeButtonTooltips) {
+            Rectangle contentRect, ButtonIcon buttonIcon, Supplier<Boolean> canClickButton,
+            GameMessage... removeButtonTooltips) {
         super(x, y, width, height, null, contentRect);
         this.trades = trades;
         this.tradeType = tradeType;
         this.tradeRemovalListener = tradeRemovalListener;
         this.buttonIcon = buttonIcon;
+        this.canClickButton = canClickButton;
         this.removeButtonTooltips = removeButtonTooltips;
         alwaysShowVerticalScrollBar = true;
         updateTradeComponents();
@@ -64,6 +61,7 @@ public class TradeComponentList extends FormContentBox {
             tradeComponent.addButton(comp -> {
                 tradeRemovalListener.accept(trade.id);
             }, buttonIcon, removeButtonTooltips);
+            tradeComponent.canClickButton = canClickButton;
             i++;
         }
         Rectangle rect = getContentBox();

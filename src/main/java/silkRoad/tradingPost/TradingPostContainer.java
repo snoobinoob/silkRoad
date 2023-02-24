@@ -4,6 +4,7 @@ import necesse.engine.network.NetworkClient;
 import necesse.engine.network.PacketReader;
 import necesse.inventory.container.customAction.IntCustomAction;
 import necesse.inventory.container.object.OEInventoryContainer;
+import silkRoad.SilkRoad;
 import silkRoad.Trade;
 import silkRoad.TradeRegistry;
 import silkRoad.action.TradeCustomAction;
@@ -56,5 +57,15 @@ public class TradingPostContainer extends OEInventoryContainer {
                 }
             }
         });
+    }
+
+    public boolean canAddOutgoing() {
+        return settlementObjectManager.hasSettlementAccess
+                && objectEntity.trades.outgoingTrades.size() < SilkRoad.settings.maxOutgoingTrades;
+    }
+
+    public boolean canAddIncoming() {
+        return settlementObjectManager.hasSettlementAccess
+                && objectEntity.trades.incomingTrades.size() < SilkRoad.settings.maxIncomingTrades;
     }
 }

@@ -10,6 +10,7 @@ import necesse.gfx.forms.components.localComponents.FormLocalLabel;
 import necesse.gfx.forms.components.localComponents.FormLocalTextButton;
 import necesse.gfx.gameFont.FontOptions;
 import necesse.gfx.ui.ButtonColor;
+import silkRoad.SilkRoad;
 import silkRoad.Trade;
 import silkRoad.tradingPost.TradingPostContainer;
 
@@ -20,18 +21,20 @@ public class NewTradeForm extends Form {
     public FormLocalTextButton acceptButton;
     public FormLocalTextButton cancelButton;
 
+    private TradingPostContainer container;
     private TradeItemEditComponent exportComponent;
     private TradeItemEditComponent importComponent;
 
     public NewTradeForm(Client client, TradingPostContainer container) {
         super(WIDTH, HEIGHT);
+        this.container = container;
 
         addComponent(new FormLocalLabel("ui", "addtrade", new FontOptions(20),
                 FormLocalLabel.ALIGN_MID, WIDTH / 2, 4, WIDTH - 8));
 
-        exportComponent = addComponent(new TradeItemEditComponent(0, 35, client));
+        exportComponent = addComponent(new TradeItemEditComponent(0, 35, client, SilkRoad.exportTooltips));
         addComponent(new ArrowComponent(4, 67, 180));
-        importComponent = addComponent(new TradeItemEditComponent(0, 99, client));
+        importComponent = addComponent(new TradeItemEditComponent(0, 99, client, SilkRoad.importTooltips));
 
         acceptButton = addComponent(new FormLocalTextButton("ui", "create", 4, HEIGHT - 56,
                 WIDTH - 8, FormInputSize.SIZE_24, ButtonColor.BASE));
@@ -54,7 +57,7 @@ public class NewTradeForm extends Form {
                 || (importComponent.item != null && importComponent.amount == 0)) {
             tradeValid = false;
         }
-        acceptButton.setActive(tradeValid);
+        acceptButton.setActive(tradeValid && container.canAddOutgoing());
         super.draw(tickManager, perspective, renderBox);
     }
 }

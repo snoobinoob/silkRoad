@@ -9,14 +9,14 @@ import necesse.engine.Settings;
 import necesse.engine.tickManager.TickManager;
 import necesse.engine.util.GameUtils;
 import necesse.entity.mobs.PlayerMob;
+import necesse.gfx.GameBackground;
 import necesse.gfx.forms.components.FormButton;
 import necesse.gfx.forms.position.FormFixedPosition;
 import necesse.gfx.forms.position.FormPosition;
 import necesse.gfx.forms.position.FormPositionContainer;
 import necesse.gfx.gameFont.FontManager;
 import necesse.gfx.gameTexture.GameTexture;
-import necesse.gfx.gameTooltips.GameTooltips;
-import necesse.gfx.gameTooltips.StringTooltips;
+import necesse.gfx.gameTooltips.ListGameTooltips;
 import necesse.gfx.gameTooltips.TooltipLocation;
 import necesse.inventory.InventoryItem;
 import necesse.inventory.item.Item;
@@ -27,14 +27,13 @@ public class FormItemIconBackground extends FormButton implements FormPositionCo
 
     private FormPosition position;
     private Supplier<InventoryItem> itemSupplier;
+    private ListGameTooltips tooltips;
 
-    public FormItemIconBackground(int x, int y, Supplier<InventoryItem> itemSupplier) {
+    public FormItemIconBackground(int x, int y, Supplier<InventoryItem> itemSupplier,
+            ListGameTooltips tooltips) {
         this.position = (FormPosition) new FormFixedPosition(x, y);
         this.itemSupplier = itemSupplier;
-    }
-
-    public void setItemSupplier(Supplier<InventoryItem> itemSupplier) {
-        this.itemSupplier = itemSupplier;
+        this.tooltips = tooltips;
     }
 
     @Override
@@ -43,6 +42,15 @@ public class FormItemIconBackground extends FormButton implements FormPositionCo
 
         background.initDraw().color(getDrawColor()).draw(getX(), getY());
         InventoryItem item = itemSupplier.get();
+        if (isHovering()) {
+            ListGameTooltips allTooltips = new ListGameTooltips(tooltips);
+            if (item != null) {
+                allTooltips.add(" ");
+                allTooltips.add(item.getTooltip(perspective));
+            }
+            Screen.addTooltip(allTooltips, GameBackground.getItemTooltipBackground(),
+                    TooltipLocation.FORM_FOCUS);
+        }
         if (item == null)
             return;
         item.drawIcon(perspective, getX(), getY() + 2, 32);
@@ -55,9 +63,6 @@ public class FormItemIconBackground extends FormButton implements FormPositionCo
         int width = FontManager.bit.getWidthCeil(amountStr, Item.tipFontOptions);
         FontManager.bit.drawString((getX() + 30 - width), getY() + 2, amountStr,
                 Item.tipFontOptions);
-        if (isHovering())
-            Screen.addTooltip((GameTooltips) new StringTooltips(item.getItemDisplayName()),
-                    TooltipLocation.FORM_FOCUS);
     }
 
     @Override
