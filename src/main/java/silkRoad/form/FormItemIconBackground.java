@@ -17,6 +17,7 @@ import necesse.gfx.forms.position.FormPositionContainer;
 import necesse.gfx.gameFont.FontManager;
 import necesse.gfx.gameTexture.GameTexture;
 import necesse.gfx.gameTooltips.ListGameTooltips;
+import necesse.gfx.gameTooltips.SpacerGameTooltip;
 import necesse.gfx.gameTooltips.TooltipLocation;
 import necesse.inventory.InventoryItem;
 import necesse.inventory.item.Item;
@@ -45,7 +46,7 @@ public class FormItemIconBackground extends FormButton implements FormPositionCo
         if (isHovering()) {
             ListGameTooltips allTooltips = new ListGameTooltips(tooltips);
             if (item != null) {
-                allTooltips.add(" ");
+                allTooltips.add(new SpacerGameTooltip(10));
                 allTooltips.add(item.getTooltip(perspective));
             }
             Screen.addTooltip(allTooltips, GameBackground.getItemTooltipBackground(),

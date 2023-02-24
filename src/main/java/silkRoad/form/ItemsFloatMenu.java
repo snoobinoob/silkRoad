@@ -43,5 +43,6 @@ public class ItemsFloatMenu extends FormFloatMenu {
         filterInput.onChange(e -> list.setFilter(((FormTextInput) e.from).getText()));
 
         setForm(form);
+        filterInput.setTyping(true);
     }
 }

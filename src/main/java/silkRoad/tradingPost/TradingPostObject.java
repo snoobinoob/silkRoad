@@ -13,6 +13,8 @@ import necesse.gfx.drawOptions.DrawOptionsList;
 import necesse.gfx.drawables.LevelSortedDrawable;
 import necesse.gfx.drawables.OrderableDrawables;
 import necesse.gfx.gameTexture.GameTexture;
+import necesse.gfx.gameTooltips.ListGameTooltips;
+import necesse.inventory.InventoryItem;
 import necesse.inventory.item.toolItem.ToolType;
 import necesse.level.gameObject.GameObject;
 import necesse.level.maps.Level;
@@ -151,5 +153,13 @@ public class TradingPostObject extends GameObject {
             TradingPostContainer.openAndSendContainer(SilkRoad.TRADING_POST_CONTAINER,
                     player.getServerClient(), level, x, y, null);
         }
+    }
+
+    @Override
+    public ListGameTooltips getItemTooltips(InventoryItem item, PlayerMob perspective) {
+        ListGameTooltips tooltips = super.getItemTooltips(item, perspective);
+        tooltips.add(Localization.translate("ui", "tradingpost1"));
+        tooltips.add(Localization.translate("ui", "tradingpost2"));
+        return tooltips;
     }
 }

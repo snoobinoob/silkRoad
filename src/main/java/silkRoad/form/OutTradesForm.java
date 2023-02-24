@@ -1,6 +1,7 @@
 package silkRoad.form;
 
 import java.awt.Rectangle;
+import necesse.engine.Screen;
 import necesse.engine.Settings;
 import necesse.engine.localization.message.LocalMessage;
 import necesse.engine.network.client.Client;
@@ -9,7 +10,9 @@ import necesse.entity.mobs.PlayerMob;
 import necesse.gfx.forms.Form;
 import necesse.gfx.forms.components.FormInputSize;
 import necesse.gfx.forms.components.localComponents.FormLocalTextButton;
+import necesse.gfx.gameTooltips.TooltipLocation;
 import necesse.gfx.ui.ButtonColor;
+import silkRoad.SilkRoad;
 import silkRoad.tradingPost.TradingPostContainer;
 
 public class OutTradesForm extends Form {
@@ -34,7 +37,14 @@ public class OutTradesForm extends Form {
     @Override
     public void draw(TickManager tickManager, PlayerMob perspective, Rectangle renderBox) {
         addTradeButton.setActive(container.canAddOutgoing());
+        if (addTradeButton.isHovering()) {
+            Screen.addTooltip(
+                    container.getSettlementAccessTooltip(
+                            container.canAddOutgoing() ? null : SilkRoad.noSpaceTooltip),
+                    TooltipLocation.FORM_FOCUS);
+        }
         super.draw(tickManager, perspective, renderBox);
+
     }
 
     public void update() {

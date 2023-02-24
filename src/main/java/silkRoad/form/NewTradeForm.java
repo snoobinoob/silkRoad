@@ -1,6 +1,8 @@
 package silkRoad.form;
 
 import java.awt.Rectangle;
+import necesse.engine.Screen;
+import necesse.engine.localization.Localization;
 import necesse.engine.network.client.Client;
 import necesse.engine.tickManager.TickManager;
 import necesse.entity.mobs.PlayerMob;
@@ -9,6 +11,8 @@ import necesse.gfx.forms.components.FormInputSize;
 import necesse.gfx.forms.components.localComponents.FormLocalLabel;
 import necesse.gfx.forms.components.localComponents.FormLocalTextButton;
 import necesse.gfx.gameFont.FontOptions;
+import necesse.gfx.gameTooltips.StringTooltips;
+import necesse.gfx.gameTooltips.TooltipLocation;
 import necesse.gfx.ui.ButtonColor;
 import silkRoad.SilkRoad;
 import silkRoad.Trade;
@@ -32,9 +36,11 @@ public class NewTradeForm extends Form {
         addComponent(new FormLocalLabel("ui", "addtrade", new FontOptions(20),
                 FormLocalLabel.ALIGN_MID, WIDTH / 2, 4, WIDTH - 8));
 
-        exportComponent = addComponent(new TradeItemEditComponent(0, 35, client, SilkRoad.exportTooltips));
+        exportComponent =
+                addComponent(new TradeItemEditComponent(0, 35, client, SilkRoad.exportTooltips));
         addComponent(new ArrowComponent(4, 67, 180));
-        importComponent = addComponent(new TradeItemEditComponent(0, 99, client, SilkRoad.importTooltips));
+        importComponent =
+                addComponent(new TradeItemEditComponent(0, 99, client, SilkRoad.importTooltips));
 
         acceptButton = addComponent(new FormLocalTextButton("ui", "create", 4, HEIGHT - 56,
                 WIDTH - 8, FormInputSize.SIZE_24, ButtonColor.BASE));
@@ -50,14 +56,23 @@ public class NewTradeForm extends Form {
 
     @Override
     public void draw(TickManager tickManager, PlayerMob perspective, Rectangle renderBox) {
-        boolean tradeValid = true;
-        if (exportComponent.item == null && importComponent.item == null) {
-            tradeValid = false;
-        } else if ((exportComponent.item != null && exportComponent.amount == 0)
-                || (importComponent.item != null && importComponent.amount == 0)) {
-            tradeValid = false;
+        StringTooltips tooltips = new StringTooltips();
+        if (!container.canAddOutgoing()) {
+            tooltips.add(Localization.translate("ui", "notradespace"));
         }
-        acceptButton.setActive(tradeValid && container.canAddOutgoing());
+        if (exportComponent.item == null && importComponent.item == null) {
+            tooltips.add(Localization.translate("ui", "emptytrade"));
+        }
+        if (exportComponent.item != null && exportComponent.amount == 0) {
+            tooltips.add(Localization.translate("ui", "exportzero"));
+        }
+        if (importComponent.item != null && importComponent.amount == 0) {
+            tooltips.add(Localization.translate("ui", "importzero"));
+        }
+        acceptButton.setActive(tooltips.getSize() == 0);
+        if (acceptButton.isHovering() && tooltips.getSize() > 0) {
+            Screen.addTooltip(tooltips, TooltipLocation.FORM_FOCUS);
+        }
         super.draw(tickManager, perspective, renderBox);
     }
 }

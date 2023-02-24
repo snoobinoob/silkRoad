@@ -2,16 +2,22 @@
 tradingpost=Trading Post
 
 [ui]
-browsetrades=Browse Trades
 addtrade=Add Trade
-newtrade=New Trade
+browsetrades=Browse Trades
+clearitem=Clear Item
 create=Create
 deletetrade=Delete
-subscribetrade=Subscribe
-unsubscribetrade=Unsubscribe
-clearitem=Clear Item
 empty=Empty
-exportitem=Export Item
+emptytrade=No trade items set
 exporthelp=Sent to trading posts
-importitem=Import Item
+exportitem=Export Item
+exportzero=Export amount is zero
 importhelp=Received from trading posts
+importitem=Import Item
+importzero=Import amount is zero
+newtrade=New Trade
+notradespace=Max number of trades present
+subscribetrade=Subscribe
+tradingpost1=Trade between settlements
+tradingpost2=Only functions in player-owned settlements
+unsubscribetrade=Unsubscribe

@@ -1,7 +1,11 @@
 package silkRoad.tradingPost;
 
+import necesse.engine.localization.Localization;
 import necesse.engine.network.NetworkClient;
 import necesse.engine.network.PacketReader;
+import necesse.gfx.GameColor;
+import necesse.gfx.gameTooltips.GameTooltips;
+import necesse.gfx.gameTooltips.StringTooltips;
 import necesse.inventory.container.customAction.IntCustomAction;
 import necesse.inventory.container.object.OEInventoryContainer;
 import silkRoad.SilkRoad;
@@ -67,5 +71,19 @@ public class TradingPostContainer extends OEInventoryContainer {
     public boolean canAddIncoming() {
         return settlementObjectManager.hasSettlementAccess
                 && objectEntity.trades.incomingTrades.size() < SilkRoad.settings.maxIncomingTrades;
+    }
+
+    public GameTooltips getSettlementAccessTooltip(GameTooltips defaultTooltips) {
+        if (!settlementObjectManager.foundSettlement) {
+            return new StringTooltips(Localization.translate("ui", "settlementnotfound"));
+        }
+        if (!settlementObjectManager.hasSettlementAccess) {
+            StringTooltips tooltips =
+                    new StringTooltips(Localization.translate("ui", "settlementispriv"));
+            tooltips.add(Localization.translate("ui", "settlementprivatetip"), GameColor.LIGHT_GRAY,
+                    400);
+            return tooltips;
+        }
+        return defaultTooltips;
     }
 }

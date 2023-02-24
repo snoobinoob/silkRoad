@@ -34,6 +34,7 @@ public class SilkRoad {
     public static ButtonIcon addButtonIcon;
     public static ListGameTooltips exportTooltips;
     public static ListGameTooltips importTooltips;
+    public static StringTooltips noSpaceTooltip;
 
     public static Settings settings;
     public static TradeBroker broker;
@@ -87,6 +88,8 @@ public class SilkRoad {
         importTooltips.add(new StringTooltips(Localization.translate("ui", "importitem"),
                 Item.Rarity.RARE.color));
         importTooltips.add(new LocalMessage("ui", "importhelp"));
+
+        noSpaceTooltip = new StringTooltips(Localization.translate("ui", "notradespace"));
     }
 
     public Settings initSettings() {
@@ -95,8 +98,8 @@ public class SilkRoad {
     }
 
     public void postInit() {
-        Recipes.registerModRecipe(new Recipe("tradingpost", 1,
-                RecipeTechRegistry.ADVANCED_WORKSTATION,
-                new Ingredient[] {new Ingredient("anylog", 10), new Ingredient("ironbar", 2)}));
+        Recipes.registerModRecipe(new Recipe("tradingpost", 1, RecipeTechRegistry.DEMONIC,
+                new Ingredient[] {new Ingredient("anylog", 50), new Ingredient("wool", 10),
+                        new Ingredient("goldbar", 20)}).showAfter("settlementflag"));
     }
 }
