@@ -32,7 +32,9 @@ public class WorldPatch {
         public static void onExit(@Advice.This World world, @Advice.Argument(0) boolean isSimple) {
             if (!isSimple) {
                 WorldFile file = world.fileSystem.file("silkRoadTrades.dat");
-                TradeRegistry.loadSave(new LoadData(file));
+                if (file.exists()) {
+                    TradeRegistry.loadSave(new LoadData(file));
+                }
             }
         }
     }
