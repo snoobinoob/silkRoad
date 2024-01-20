@@ -8,6 +8,11 @@ import necesse.inventory.InventoryItem;
 import necesse.level.maps.Level;
 import silkRoad.tradingPost.TradingPostObjectEntity;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class TradeBroker {
     private World world;
     private long lastTradeTime;
@@ -47,7 +52,8 @@ public class TradeBroker {
         if (srcInv == null) {
             return;
         }
-        if (!inventoryHasItems(srcInv, tradeData.trade.exportItem)) {
+        Collection<InventoryItem> srcItems = getItems(srcInv, tradeData.trade.exportItem);
+        if (srcItems == null) {
             return;
         }
         for (Location dstLocation : tradeData.destinations) {
@@ -55,20 +61,21 @@ public class TradeBroker {
             if (dstInv == null) {
                 continue;
             }
-            if (!inventoryHasItems(dstInv, tradeData.trade.importItem)) {
+            Collection<InventoryItem> dstItems = getItems(dstInv, tradeData.trade.importItem);
+            if (dstItems == null) {
                 continue;
             }
-            removeItems(srcInv, tradeData.trade.exportItem);
-            removeItems(dstInv, tradeData.trade.importItem);
-            boolean srcHasSpace = inventoryHasSpace(srcInv, tradeData.trade.importItem);
-            boolean dstHasSpace = inventoryHasSpace(srcInv, tradeData.trade.exportItem);
+            removeItems(srcInv, srcItems);
+            removeItems(dstInv, dstItems);
+            boolean srcHasSpace = inventoryHasSpace(srcInv, dstItems);
+            boolean dstHasSpace = inventoryHasSpace(dstInv, srcItems);
             if (srcHasSpace && dstHasSpace) {
-                addItems(srcInv, tradeData.trade.importItem);
-                addItems(dstInv, tradeData.trade.exportItem);
+                addItems(srcInv, dstItems);
+                addItems(dstInv, srcItems);
                 break;
             } else {
-                addItems(srcInv, tradeData.trade.exportItem);
-                addItems(dstInv, tradeData.trade.importItem);
+                addItems(srcInv, srcItems);
+                addItems(dstInv, dstItems);
             }
         }
     }
@@ -83,30 +90,74 @@ public class TradeBroker {
         if (requireSettlement && !level.settlementLayer.isActive()) {
             return null;
         }
-        ObjectEntity oe =
-                level.entityManager.getObjectEntity(location.getTileX(), location.getTileY());
-        if (oe == null || !(oe instanceof TradingPostObjectEntity)) {
+        ObjectEntity oe = level.entityManager.getObjectEntity(location.getTileX(), location.getTileY());
+        if (!(oe instanceof TradingPostObjectEntity)) {
             return null;
         }
         return ((TradingPostObjectEntity) oe);
     }
 
-    private boolean inventoryHasItems(Inventory inv, InventoryItem item) {
-        return item == null || inv.getAmount(null, null, item.item, "count") >= item.getAmount();
+    private Collection<InventoryItem> getItems(Inventory inv, InventoryItem search) {
+        List<InventoryItem> items = new ArrayList<>();
+        if (search == null) {
+            return items;
+        }
+        int amountRemaining = search.getAmount();
+        for (int slot = 0; slot < inv.getSize(); slot++) {
+            if (inv.isSlotClear(slot)) {
+                continue;
+            }
+            InventoryItem item = inv.getItem(slot);
+            if (!item.equals(null, search, true, true, "trade")) {
+                continue;
+            }
+            int amountToAdd = Math.min(amountRemaining, item.getAmount());
+            items.add(item.copy(amountToAdd));
+            amountRemaining -= amountToAdd;
+            if (amountRemaining == 0) {
+                return items;
+            }
+        }
+        return null;
     }
 
-    private void removeItems(Inventory inv, InventoryItem item) {
-        if (item != null) {
+    private void removeItems(Inventory inv, Collection<InventoryItem> items) {
+        for (InventoryItem item : items) {
             inv.removeItems(null, null, item.item, item.getAmount(), "trade");
         }
     }
 
-    private boolean inventoryHasSpace(Inventory inv, InventoryItem item) {
-        return item == null || inv.canAddItem(null, null, item, "trade") == item.getAmount();
+    private boolean inventoryHasSpace(Inventory inv, Collection<InventoryItem> items) {
+        Collection<InventoryItem> copiedItems = items.stream().map(InventoryItem::copy).collect(Collectors.toList());
+        int totalItemCount = items.stream().mapToInt(InventoryItem::getAmount).sum();
+        for (int slot = 0; slot < inv.getSize(); slot++) {
+            InventoryItem currItem = inv.getItem(slot);
+            for (InventoryItem item : copiedItems) {
+                if (item.getAmount() == 0) {
+                    continue;
+                }
+                int stackSize = inv.getItemStackLimit(slot, item);
+                if (currItem == null) {
+                    int amountToAdd = Math.min(stackSize, item.getAmount());
+                    currItem = item.copy(amountToAdd);
+                    item.setAmount(item.getAmount() - amountToAdd);
+                    totalItemCount -= amountToAdd;
+                } else if (currItem.equals(null, item, true, false, "trade")) {
+                    int amountToAdd = Math.min(stackSize - currItem.getAmount(), item.getAmount());
+                    currItem = currItem.copy(currItem.getAmount() + amountToAdd);
+                    item.setAmount(item.getAmount() - amountToAdd);
+                    totalItemCount -= amountToAdd;
+                }
+            }
+            if (totalItemCount == 0) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    private void addItems(Inventory inv, InventoryItem item) {
-        if (item != null) {
+    private void addItems(Inventory inv, Collection<InventoryItem> items) {
+        for (InventoryItem item : items) {
             inv.addItem(null, null, item.copy(), "trade", null);
         }
     }

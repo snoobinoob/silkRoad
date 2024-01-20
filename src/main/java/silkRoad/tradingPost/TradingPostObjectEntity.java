@@ -3,12 +3,17 @@ package silkRoad.tradingPost;
 import necesse.engine.network.PacketReader;
 import necesse.engine.network.PacketWriter;
 import necesse.engine.network.server.Server;
+import necesse.engine.network.server.ServerClient;
 import necesse.engine.save.LoadData;
 import necesse.engine.save.SaveData;
 import necesse.entity.objectEntity.InventoryObjectEntity;
+import necesse.entity.pickup.ItemPickupEntity;
+import necesse.level.gameObject.GameObject;
 import necesse.level.maps.Level;
 import silkRoad.TradeInfo;
 import silkRoad.packet.PacketTradeInfo;
+
+import java.util.ArrayList;
 
 public class TradingPostObjectEntity extends InventoryObjectEntity {
     public TradeInfo trades;
@@ -31,14 +36,13 @@ public class TradingPostObjectEntity extends InventoryObjectEntity {
         }
 
         if (trades.isDirty()) {
-            server.network.sendToClientsAt(new PacketTradeInfo(this), getLevel());
+            server.network.sendToClientsWithTile(new PacketTradeInfo(this), getLevel(), getTileX(), getTileY());
             trades.markClean();
         }
     }
 
     @Override
-    public void remove() {
-        super.remove();
+    public void onObjectDestroyed(GameObject previousObject, ServerClient client, ArrayList<ItemPickupEntity> itemsDropped) {
         trades.remove(this);
     }
 
