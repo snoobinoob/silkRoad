@@ -1,7 +1,6 @@
 package silkRoad.form;
 
-import java.util.function.Consumer;
-import necesse.engine.control.InputEvent;
+import necesse.engine.input.InputEvent;
 import necesse.engine.localization.message.LocalMessage;
 import necesse.engine.network.client.Client;
 import necesse.gfx.forms.Form;
@@ -11,6 +10,8 @@ import necesse.gfx.forms.components.FormTextInput;
 import necesse.gfx.forms.components.lists.FormDebugItemList;
 import necesse.gfx.forms.floatMenu.FormFloatMenu;
 import necesse.inventory.InventoryItem;
+
+import java.util.function.Consumer;
 
 public class ItemsFloatMenu extends FormFloatMenu {
     private static final int WIDTH = 156;

@@ -7,8 +7,8 @@ plugins {
 
 project.ext.modID = "snoobinoob.silkroad" // The unique id of your mod. Must be all lowercase and cannot use special characters.
 project.ext.modName = "Silk Road" // The display name of your mod.
-project.ext.modVersion = "4.2" // Your current builds version. Must follow the xx.xx... format.
-project.ext.gameVersion = "0.23.1" // The target game version.
+project.ext.modVersion = "5.0" // Your current builds version. Must follow the xx.xx... format.
+project.ext.gameVersion = "0.26.1" // The target game version.
 project.ext.modDescription = "Inter-settlement trading" // Short description of what your mod is.
 project.ext.author = "Snoobinoob" // Your name
 
@@ -54,7 +54,7 @@ configurations {
 sourceSets.main.output.resourcesDir = file("build/mod/resources/")
 sourceSets.main.java.outputDir = file("build/mod/")
 sourceSets.main.compileClasspath += configurations.libDepends // Adds libDepends configuration to classpath
-def buildLocation = "build/jar"
+def buildLocation = "build/jar/"
 
 compileJava.options.encoding = "UTF-8"
 
@@ -110,9 +110,9 @@ task runClient(type: JavaExec) {
 
     classpath = files(gameDirectory + "/Necesse.jar")
 
-    main = "StartClient"
-    jvmArgs "-Xms512m", "-Xmx3G", "-XX:+UnlockExperimentalVMOptions", "-XX:+UseG1GC", "-XX:G1NewSizePercent=20", "-XX:G1ReservePercent=20", "-XX:MaxGCPauseMillis=50", "-XX:G1HeapRegionSize=32M"
-    args "-mod \"${buildLocation}\""
+    main = "StartSteamClient"
+    jvmArgs "-Xms512m", "-Xmx4G", "-XX:+UnlockExperimentalVMOptions", "-XX:+UseG1GC", "-XX:G1NewSizePercent=20", "-XX:G1ReservePercent=20", "-XX:MaxGCPauseMillis=50", "-XX:G1HeapRegionSize=32M"
+    args "-dev", "-mod \"${buildLocation}\""
 }
 
 task runDevClient(type: JavaExec) {
@@ -122,8 +122,8 @@ task runDevClient(type: JavaExec) {
 
     classpath = files(gameDirectory + "/Necesse.jar")
 
-    main = "StartClient"
-    jvmArgs "-Xms512m", "-Xmx3G", "-XX:+UnlockExperimentalVMOptions", "-XX:+UseG1GC", "-XX:G1NewSizePercent=20", "-XX:G1ReservePercent=20", "-XX:MaxGCPauseMillis=50", "-XX:G1HeapRegionSize=32M"
+    main = "StartSteamClient"
+    jvmArgs "-Xms512m", "-Xmx4G", "-XX:+UnlockExperimentalVMOptions", "-XX:+UseG1GC", "-XX:G1NewSizePercent=20", "-XX:G1ReservePercent=20", "-XX:MaxGCPauseMillis=50", "-XX:G1HeapRegionSize=32M"
     args "-dev 1", "-mod \"${buildLocation}\""
 }
 
@@ -134,8 +134,8 @@ task runServer(type: JavaExec) {
 
     classpath = files(gameDirectory + "/Server.jar")
 
-    main = "StartServer"
-    jvmArgs "-Xms512m", "-Xmx3G", "-XX:+UnlockExperimentalVMOptions", "-XX:+UseG1GC", "-XX:G1NewSizePercent=20", "-XX:G1ReservePercent=20", "-XX:MaxGCPauseMillis=50", "-XX:G1HeapRegionSize=32M"
+    main = "StartDesktopServer"
+    jvmArgs "-Xms512m", "-Xmx4G", "-XX:+UnlockExperimentalVMOptions", "-XX:+UseG1GC", "-XX:G1NewSizePercent=20", "-XX:G1ReservePercent=20", "-XX:MaxGCPauseMillis=50", "-XX:G1HeapRegionSize=32M"
     args "-mod \"${buildLocation}\""
 }
 
@@ -143,6 +143,12 @@ task buildModJar(type: Jar) {
     group "necesse"
     description "Generates the mod jar into the build folder"
     dependsOn "classes"
+
+    doFirst {
+        fileTree(dir: buildLocation).exclude("${jarName}.jar").visit { FileVisitDetails details ->
+            delete details.file
+        }
+    }
 
     // Add mod output
     from sourceSets.main.java.outputDir

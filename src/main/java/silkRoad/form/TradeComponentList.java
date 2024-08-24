@@ -1,9 +1,5 @@
 package silkRoad.form;
 
-import java.awt.Rectangle;
-import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 import necesse.engine.localization.message.GameMessage;
 import necesse.engine.util.GameMath;
 import necesse.gfx.forms.components.FormContentBox;
@@ -13,13 +9,18 @@ import necesse.gfx.gameFont.FontOptions;
 import necesse.gfx.ui.ButtonIcon;
 import silkRoad.Trade;
 
+import java.awt.*;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
 public class TradeComponentList extends FormContentBox {
-    private List<Trade> trades;
-    private TradeComponent.Type tradeType;
-    private Consumer<Integer> tradeRemovalListener;
-    private ButtonIcon buttonIcon;
-    private Supplier<Boolean> canClickButton;
-    private GameMessage[] removeButtonTooltips;
+    private final List<Trade> trades;
+    private final TradeComponent.Type tradeType;
+    private final Consumer<Integer> tradeRemovalListener;
+    private final ButtonIcon buttonIcon;
+    private final Supplier<Boolean> canClickButton;
+    private final GameMessage[] removeButtonTooltips;
 
     public TradeComponentList(List<Trade> trades, int x, int y, int width, int height,
             TradeComponent.Type tradeType, Consumer<Integer> tradeRemovalListener,

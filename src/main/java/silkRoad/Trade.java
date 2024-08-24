@@ -32,10 +32,10 @@ public class Trade {
     }
 
     public boolean matchesFilter(String filter) {
-        if (exportItem != null && exportItem.item.matchesSearch(exportItem, null, filter)) {
+        if (exportItem != null && exportItem.item.matchesSearch(exportItem, null, filter, null)) {
             return true;
         }
-        if (importItem != null && importItem.item.matchesSearch(importItem, null, filter)) {
+        if (importItem != null && importItem.item.matchesSearch(importItem, null, filter, null)) {
             return true;
         }
         return false;

@@ -1,15 +1,16 @@
 package silkRoad;
 
-import java.awt.Point;
 import necesse.engine.network.PacketReader;
 import necesse.engine.network.PacketWriter;
 import necesse.engine.save.LoadData;
 import necesse.engine.save.SaveData;
 import necesse.entity.objectEntity.ObjectEntity;
 
+import java.awt.*;
+
 public class Location {
-    private Point islandPoint;
-    private Point tilePoint;
+    private final Point islandPoint;
+    private final Point tilePoint;
 
     public Location(ObjectEntity oe) {
         this.islandPoint = new Point(oe.getLevel().getIslandX(), oe.getLevel().getIslandY());

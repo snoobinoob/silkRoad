@@ -3,12 +3,12 @@ package silkRoad.form;
 import java.awt.Color;
 import java.awt.Rectangle;
 import necesse.engine.Settings;
-import necesse.engine.tickManager.TickManager;
+import necesse.engine.gameLoop.tickManager.TickManager;
 import necesse.entity.mobs.PlayerMob;
 import necesse.gfx.forms.components.FormCustomDraw;
 
 public class ArrowComponent extends FormCustomDraw {
-    private int rotation;
+    private final int rotation;
 
     public ArrowComponent(int x, int y, int rotation) {
         super(x, y, 32, 32);

@@ -1,10 +1,8 @@
 package silkRoad;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
+
 import necesse.engine.save.LoadData;
 import necesse.engine.save.SaveData;
 import silkRoad.packet.PacketAddTrade;
@@ -45,7 +43,7 @@ public class TradeRegistry {
         if (tradeData != null) {
             source.trades.removeOutgoingTrade(tradeData.trade);
 
-            List<Location> destinations = tradeData.destinations.stream().toList();
+            List<Location> destinations = new ArrayList<>(tradeData.destinations);
             for (Location destination : destinations) {
                 SilkRoad.broker.unsubscribeLocation(id, destination);
             }
@@ -94,7 +92,7 @@ public class TradeRegistry {
                 return false;
             }
             return !oeLocation.equals(t.source) && !oe.trades.incomingTrades.contains(t.trade);
-        }).map(t -> t.trade).toList();
+        }).map(t -> t.trade).collect(Collectors.toList());
     }
 
     public static SaveData getSave() {

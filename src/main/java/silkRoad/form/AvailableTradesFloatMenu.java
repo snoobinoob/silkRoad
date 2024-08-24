@@ -13,7 +13,7 @@ public class AvailableTradesFloatMenu extends FormFloatMenu {
     private static final int WIDTH = 156;
     private static final int HEIGHT = 250;
 
-    private TradingPostContainer container;
+    private final TradingPostContainer container;
 
     public AvailableTradesFloatMenu(InTradesForm parent, TradingPostContainer container) {
         super(parent);
@@ -31,7 +31,7 @@ public class AvailableTradesFloatMenu extends FormFloatMenu {
                         32, WIDTH - 8, HEIGHT - 36, TradeComponent.Type.INCOMING, tradeId -> {
                             container.subscribeAction.runAndSend(tradeId);
                             remove();
-                        }, SilkRoad.addButtonIcon, () -> container.canAddIncoming(),
+                        }, SilkRoad.addButtonIcon, container::canAddIncoming,
                         new LocalMessage("ui", "subscribetrade")));
 
         container.objectEntity.trades.onChanged(hashCode(),

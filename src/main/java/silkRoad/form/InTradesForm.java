@@ -10,8 +10,8 @@ import necesse.gfx.ui.ButtonColor;
 import silkRoad.tradingPost.TradingPostContainer;
 
 public class InTradesForm extends Form {
-    private FormLocalTextButton browseTradesButton;
-    private TradeComponentList list;
+    private final FormLocalTextButton browseTradesButton;
+    private final TradeComponentList list;
 
     public InTradesForm(Client client, TradingPostContainer container) {
         super(156, 198);

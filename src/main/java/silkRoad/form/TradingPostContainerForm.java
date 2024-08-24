@@ -2,16 +2,17 @@ package silkRoad.form;
 
 import necesse.engine.Settings;
 import necesse.engine.network.client.Client;
+import necesse.engine.window.GameWindow;
 import necesse.gfx.forms.position.FormRelativePosition;
 import necesse.gfx.forms.presets.containerComponent.ContainerFormList;
 import necesse.gfx.forms.presets.containerComponent.object.OEInventoryContainerForm;
 import silkRoad.tradingPost.TradingPostContainer;
 
 public class TradingPostContainerForm extends ContainerFormList<TradingPostContainer> {
-    private OEInventoryContainerForm<TradingPostContainer> invFormSwitcher;
-    private InTradesForm inTradesForm;
-    private OutTradesFormSwitcher outTradesForm;
-    private int uniqueSeed;
+    private final OEInventoryContainerForm<TradingPostContainer> invFormSwitcher;
+    private final InTradesForm inTradesForm;
+    private final OutTradesFormSwitcher outTradesForm;
+    private final int uniqueSeed;
 
     public TradingPostContainerForm(Client client, TradingPostContainer container, int uniqueSeed) {
         super(client, container);
@@ -32,8 +33,8 @@ public class TradingPostContainerForm extends ContainerFormList<TradingPostConta
     }
 
     @Override
-    public void onWindowResized() {
-        super.onWindowResized();
+    public void onWindowResized(GameWindow window) {
+        super.onWindowResized(window);
 
         inTradesForm.setPosition(new FormRelativePosition(invFormSwitcher.inventoryForm,
                 () -> -inTradesForm.getWidth() - Settings.UI.formSpacing, () -> 0));

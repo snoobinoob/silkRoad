@@ -1,11 +1,8 @@
 package silkRoad.tradingPost;
 
-import java.awt.Rectangle;
-import java.util.List;
-import java.awt.Color;
+import necesse.engine.gameLoop.tickManager.TickManager;
 import necesse.engine.localization.Localization;
 import necesse.engine.registries.ObjectRegistry;
-import necesse.engine.tickManager.TickManager;
 import necesse.entity.mobs.PlayerMob;
 import necesse.entity.objectEntity.ObjectEntity;
 import necesse.gfx.camera.GameCamera;
@@ -23,6 +20,9 @@ import necesse.level.maps.multiTile.MultiTile;
 import necesse.level.maps.multiTile.SideMultiTile;
 import silkRoad.SilkRoad;
 
+import java.awt.*;
+import java.util.List;
+
 public class TradingPostObject extends GameObject {
     protected int otherId;
 
@@ -37,7 +37,7 @@ public class TradingPostObject extends GameObject {
 
     @Override
     public MultiTile getMultiTile(int rotation) {
-        return new SideMultiTile(0, 1, 1, 2, rotation, true, new int[] {otherId, getID()});
+        return new SideMultiTile(0, 1, 1, 2, rotation, true, otherId, getID());
     }
 
     @Override
@@ -149,7 +149,7 @@ public class TradingPostObject extends GameObject {
 
     @Override
     public void interact(Level level, int x, int y, PlayerMob player) {
-        if (level.isServerLevel()) {
+        if (level.isServer()) {
             TradingPostContainer.openAndSendContainer(SilkRoad.TRADING_POST_CONTAINER,
                     player.getServerClient(), level, x, y, null);
         }

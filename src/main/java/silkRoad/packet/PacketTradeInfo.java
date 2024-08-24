@@ -8,9 +8,9 @@ import necesse.engine.network.client.Client;
 import silkRoad.tradingPost.TradingPostObjectEntity;
 
 public class PacketTradeInfo extends Packet {
-    private int x;
-    private int y;
-    private Packet content;
+    private final int x;
+    private final int y;
+    private final Packet content;
 
     public PacketTradeInfo(byte[] data) {
         super(data);

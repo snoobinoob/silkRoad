@@ -27,6 +27,9 @@ import silkRoad.tradingPost.TradingPostContainer;
 import silkRoad.tradingPost.TradingPostObject;
 import silkRoad.tradingPost.TradingPostObjectEntity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @ModEntry
 public class SilkRoad {
     public static int TRADING_POST_CONTAINER;
@@ -62,8 +65,8 @@ public class SilkRoad {
                 new GameEventListener<ServerClientConnectedEvent>() {
                     @Override
                     public void onEvent(ServerClientConnectedEvent event) {
-                        event.client.sendPacket(new PacketConnectionTradeList(
-                                TradeRegistry.allTrades().stream().toList()));
+                        ArrayList<TradeMetadata> allTrades = new ArrayList<>(TradeRegistry.allTrades());
+                        event.client.sendPacket(new PacketConnectionTradeList(allTrades));
                     }
                 });
 

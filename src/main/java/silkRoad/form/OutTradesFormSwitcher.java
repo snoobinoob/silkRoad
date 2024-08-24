@@ -6,8 +6,8 @@ import necesse.gfx.forms.position.FormPosition;
 import silkRoad.tradingPost.TradingPostContainer;
 
 public class OutTradesFormSwitcher extends FormSwitcher {
-    private OutTradesForm outTradesForm;
-    private NewTradeForm newTradeForm;
+    private final OutTradesForm outTradesForm;
+    private final NewTradeForm newTradeForm;
 
     public OutTradesFormSwitcher(Client client, TradingPostContainer container) {
         outTradesForm = addComponent(new OutTradesForm(client, container));

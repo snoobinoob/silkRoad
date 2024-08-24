@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import necesse.engine.network.Packet;
 import necesse.engine.network.PacketReader;
 import necesse.engine.network.PacketWriter;
@@ -16,7 +18,7 @@ public class TradeInfo {
     public List<Trade> outgoingTrades;
 
     private boolean dirty;
-    private Map<Integer, Runnable> listeners;
+    private final Map<Integer, Runnable> listeners;
 
     public TradeInfo() {
         incomingTrades = new ArrayList<>();
@@ -70,11 +72,11 @@ public class TradeInfo {
     }
 
     public void remove(TradingPostObjectEntity oe) {
-        List<Integer> tradeIds = incomingTrades.stream().map(t -> t.id).toList();
+        List<Integer> tradeIds = incomingTrades.stream().map(t -> t.id).collect(Collectors.toList());
         for (int tradeId : tradeIds) {
             TradeRegistry.unsubscribe(tradeId, oe);
         }
-        tradeIds = outgoingTrades.stream().map(t -> t.id).toList();
+        tradeIds = outgoingTrades.stream().map(t -> t.id).collect(Collectors.toList());
         for (int tradeId : tradeIds) {
             TradeRegistry.removeTrade(tradeId, oe);
         }

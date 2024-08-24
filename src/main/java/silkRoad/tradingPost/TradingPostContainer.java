@@ -29,7 +29,7 @@ public class TradingPostContainer extends OEInventoryContainer {
         addTradeAction = registerAction(new TradeCustomAction() {
             @Override
             public void run(Trade trade) {
-                if (client.isServerClient()) {
+                if (client.isServer()) {
                     TradeRegistry.register(trade, objectEntity);
                 }
             }
@@ -38,7 +38,7 @@ public class TradingPostContainer extends OEInventoryContainer {
         removeTradeAction = registerAction(new IntCustomAction() {
             @Override
             protected void run(int tradeId) {
-                if (client.isServerClient()) {
+                if (client.isServer()) {
                     TradeRegistry.removeTrade(tradeId, objectEntity);
                 }
             }
@@ -47,7 +47,7 @@ public class TradingPostContainer extends OEInventoryContainer {
         subscribeAction = registerAction(new IntCustomAction() {
             @Override
             protected void run(int tradeId) {
-                if (client.isServerClient()) {
+                if (client.isServer()) {
                     TradeRegistry.subscribe(tradeId, objectEntity);
                 }
             }
@@ -56,7 +56,7 @@ public class TradingPostContainer extends OEInventoryContainer {
         unsubscribeAction = registerAction(new IntCustomAction() {
             @Override
             protected void run(int tradeId) {
-                if (client.isServerClient()) {
+                if (client.isServer()) {
                     TradeRegistry.unsubscribe(tradeId, objectEntity);
                 }
             }
