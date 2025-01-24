@@ -41,13 +41,6 @@ public class TradingPostObject extends GameObject {
     }
 
     @Override
-    public int getPlaceRotation(Level level, int levelX, int levelY, PlayerMob player,
-            int playerDir) {
-        return Math.floorMod(super.getPlaceRotation(level, levelX, levelY, player, playerDir) - 1,
-                4);
-    }
-
-    @Override
     public Rectangle getCollision(Level level, int x, int y, int rotation) {
         if (rotation == 0)
             return new Rectangle(x * 32 + 4, y * 32, 24, 26);
@@ -71,8 +64,8 @@ public class TradingPostObject extends GameObject {
 
     @Override
     public void addDrawables(List<LevelSortedDrawable> list, OrderableDrawables tileList,
-            Level level, int tileX, int tileY, TickManager tickManager, GameCamera camera,
-            PlayerMob perspective) {
+                             Level level, int tileX, int tileY, TickManager tickManager, GameCamera camera,
+                             PlayerMob perspective) {
         GameLight light = level.getLightLevel(tileX, tileY);
         int drawX = camera.getTileDrawX(tileX);
         int drawY = camera.getTileDrawY(tileY);
@@ -105,7 +98,7 @@ public class TradingPostObject extends GameObject {
 
     @Override
     public void drawPreview(Level level, int tileX, int tileY, int rotation, float alpha,
-            PlayerMob player, GameCamera camera) {
+                            PlayerMob player, GameCamera camera) {
         int drawX = camera.getTileDrawX(tileX);
         int drawY = camera.getTileDrawY(tileY);
         if (rotation == 0) { // Right
@@ -134,7 +127,7 @@ public class TradingPostObject extends GameObject {
         TradingPost2Object o2 = new TradingPost2Object();
         o2.otherId = ObjectRegistry.registerObject("tradingpost", o1, 140.0F, true);
         o1.otherId = ObjectRegistry.registerObject("tradingpost2", o2, 0.0F, false);
-        return new int[] {o2.otherId, o1.otherId};
+        return new int[]{o2.otherId, o1.otherId};
     }
 
     @Override
@@ -151,7 +144,7 @@ public class TradingPostObject extends GameObject {
     public void interact(Level level, int x, int y, PlayerMob player) {
         if (level.isServer()) {
             TradingPostContainer.openAndSendContainer(SilkRoad.TRADING_POST_CONTAINER,
-                    player.getServerClient(), level, x, y, null);
+                player.getServerClient(), level, x, y, null);
         }
     }
 
