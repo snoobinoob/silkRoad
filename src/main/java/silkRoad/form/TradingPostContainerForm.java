@@ -17,7 +17,7 @@ public class TradingPostContainerForm extends ContainerFormList<TradingPostConta
     public TradingPostContainerForm(Client client, TradingPostContainer container, int uniqueSeed) {
         super(client, container);
         invFormSwitcher = addComponent(new OEInventoryContainerForm<>(client, container));
-        inTradesForm = addComponent(new InTradesForm(client, container));
+        inTradesForm = addComponent(new InTradesForm(container));
         outTradesForm = addComponent(new OutTradesFormSwitcher(client, container));
         this.uniqueSeed = uniqueSeed;
 
@@ -36,10 +36,16 @@ public class TradingPostContainerForm extends ContainerFormList<TradingPostConta
     public void onWindowResized(GameWindow window) {
         super.onWindowResized(window);
 
-        inTradesForm.setPosition(new FormRelativePosition(invFormSwitcher.inventoryForm,
-                () -> -inTradesForm.getWidth() - Settings.UI.formSpacing, () -> 0));
-        outTradesForm.setPosition(new FormRelativePosition(invFormSwitcher.inventoryForm,
-                () -> invFormSwitcher.inventoryForm.getWidth() + Settings.UI.formSpacing, () -> 0));
+        inTradesForm.setPosition(new FormRelativePosition(
+            invFormSwitcher.inventoryForm,
+            () -> -inTradesForm.getWidth() - Settings.UI.formSpacing,
+            () -> 0
+        ));
+        outTradesForm.setPosition(new FormRelativePosition(
+            invFormSwitcher.inventoryForm,
+            () -> invFormSwitcher.inventoryForm.getWidth() + Settings.UI.formSpacing,
+            () -> 0
+        ));
     }
 
     @Override

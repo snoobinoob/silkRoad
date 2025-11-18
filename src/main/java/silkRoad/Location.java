@@ -4,26 +4,23 @@ import necesse.engine.network.PacketReader;
 import necesse.engine.network.PacketWriter;
 import necesse.engine.save.LoadData;
 import necesse.engine.save.SaveData;
+import necesse.engine.util.LevelIdentifier;
 import necesse.entity.objectEntity.ObjectEntity;
 
 import java.awt.*;
 
 public class Location {
-    private final Point islandPoint;
-    private final Point tilePoint;
+    public final LevelIdentifier levelIdentifier;
+    public final Point tilePoint;
 
     public Location(ObjectEntity oe) {
-        this.islandPoint = new Point(oe.getLevel().getIslandX(), oe.getLevel().getIslandY());
-        this.tilePoint = new Point(oe.getTileX(), oe.getTileY());
+        levelIdentifier = oe.getLevel().getIdentifier();
+        tilePoint = new Point(oe.tileX, oe.tileY);
     }
 
-    private Location(Point island, Point tile) {
-        islandPoint = island;
+    private Location(LevelIdentifier levelIdentifier, Point tile) {
+        this.levelIdentifier = levelIdentifier;
         tilePoint = tile;
-    }
-
-    public Point getIslandPoint() {
-        return islandPoint;
     }
 
     public int getTileX() {
@@ -35,34 +32,32 @@ public class Location {
     }
 
     public void writePacket(PacketWriter writer) {
-        writer.putNextInt(islandPoint.x);
-        writer.putNextInt(islandPoint.y);
+        writer.putNextString(levelIdentifier.stringID);
         writer.putNextInt(tilePoint.x);
         writer.putNextInt(tilePoint.y);
     }
 
     public static Location readPacket(PacketReader reader) {
-        int islandX = reader.getNextInt();
-        int islandY = reader.getNextInt();
+        String levelIdentifierString = reader.getNextString();
         int tileX = reader.getNextInt();
         int tileY = reader.getNextInt();
-        return new Location(new Point(islandX, islandY), new Point(tileX, tileY));
+        return new Location(new LevelIdentifier(levelIdentifierString), new Point(tileX, tileY));
     }
 
     public void addSaveData(SaveData save) {
-        save.addPoint("island", islandPoint);
+        save.addSafeString("levelID", levelIdentifier.stringID);
         save.addPoint("tile", tilePoint);
     }
 
     public static Location fromLoadData(LoadData save) {
-        Point island = save.getPoint("island");
+        String levelIdentifierString = save.getSafeString("levelID");
         Point tile = save.getPoint("tile");
-        return new Location(island, tile);
+        return new Location(new LevelIdentifier(levelIdentifierString), tile);
     }
 
     public int distanceTo(Location other) {
-        return Math.abs(islandPoint.x - other.islandPoint.x)
-                + Math.abs(islandPoint.y - other.islandPoint.y);
+        return Math.abs(tilePoint.x - other.tilePoint.x)
+            + Math.abs(tilePoint.y - other.tilePoint.y);
     }
 
     @Override
@@ -71,6 +66,6 @@ public class Location {
             return false;
         }
         Location other = (Location) obj;
-        return islandPoint.equals(other.islandPoint) && tilePoint.equals(other.tilePoint);
+        return levelIdentifier.equals(other.levelIdentifier) && tilePoint.equals(other.tilePoint);
     }
 }

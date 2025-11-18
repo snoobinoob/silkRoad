@@ -27,8 +27,8 @@ import silkRoad.tradingPost.TradingPostContainer;
 import silkRoad.tradingPost.TradingPostObject;
 import silkRoad.tradingPost.TradingPostObjectEntity;
 
+import java.awt.*;
 import java.util.ArrayList;
-import java.util.List;
 
 @ModEntry
 public class SilkRoad {
@@ -47,14 +47,14 @@ public class SilkRoad {
 
         broker = new TradeBroker();
 
-        TRADING_POST_CONTAINER = ContainerRegistry.registerOEContainer(
-                (client, uniqueSeed, oe, content) -> new TradingPostContainerForm(client,
-                        new TradingPostContainer(client.getClient(), uniqueSeed,
-                                (TradingPostObjectEntity) oe, new PacketReader(content)),
-                        uniqueSeed),
-                (serverClient, uniqueSeed, oe, content, serverObject) -> new TradingPostContainer(
-                        serverClient, uniqueSeed, (TradingPostObjectEntity) oe,
-                        new PacketReader(content)));
+        TRADING_POST_CONTAINER = ContainerRegistry.registerSettlementDependantOEContainer(
+            (client, uniqueSeed, settlement, oe, content) -> new TradingPostContainerForm(client,
+                new TradingPostContainer(client.getClient(), uniqueSeed, settlement,
+                    (TradingPostObjectEntity) oe, new PacketReader(content)),
+                uniqueSeed),
+            (serverClient, uniqueSeed, settlement, oe, content, serverObject) -> new TradingPostContainer(
+                serverClient, uniqueSeed, settlement, (TradingPostObjectEntity) oe,
+                new PacketReader(content)));
 
         PacketRegistry.registerPacket(PacketTradeInfo.class);
         PacketRegistry.registerPacket(PacketConnectionTradeList.class);
@@ -62,13 +62,13 @@ public class SilkRoad {
         PacketRegistry.registerPacket(PacketRemoveTrade.class);
 
         GameEvents.addListener(ServerClientConnectedEvent.class,
-                new GameEventListener<ServerClientConnectedEvent>() {
-                    @Override
-                    public void onEvent(ServerClientConnectedEvent event) {
-                        ArrayList<TradeMetadata> allTrades = new ArrayList<>(TradeRegistry.allTrades());
-                        event.client.sendPacket(new PacketConnectionTradeList(allTrades));
-                    }
-                });
+            new GameEventListener<ServerClientConnectedEvent>() {
+                @Override
+                public void onEvent(ServerClientConnectedEvent event) {
+                    ArrayList<TradeMetadata> allTrades = new ArrayList<>(TradeRegistry.allTrades());
+                    event.client.sendPacket(new PacketConnectionTradeList(allTrades));
+                }
+            });
 
         GameEvents.addListener(ServerStartEvent.class, new GameEventListener<ServerStartEvent>() {
             @Override
@@ -80,16 +80,20 @@ public class SilkRoad {
     }
 
     public void initResources() {
-        addButtonIcon = new ButtonIcon(necesse.engine.Settings.UI, "button_add_20", false);
+        addButtonIcon = new ButtonIcon(necesse.engine.Settings.UI, "button_plus_20", Color.BLACK);
 
         exportTooltips = new ListGameTooltips();
-        exportTooltips.add(new StringTooltips(Localization.translate("ui", "exportitem"),
-                Item.Rarity.RARE.color));
+        exportTooltips.add(new StringTooltips(
+            Localization.translate("ui", "exportitem"),
+            Item.Rarity.RARE.color
+        ));
         exportTooltips.add(new LocalMessage("ui", "exporthelp"));
 
         importTooltips = new ListGameTooltips();
-        importTooltips.add(new StringTooltips(Localization.translate("ui", "importitem"),
-                Item.Rarity.RARE.color));
+        importTooltips.add(new StringTooltips(
+            Localization.translate("ui", "importitem"),
+            Item.Rarity.RARE.color
+        ));
         importTooltips.add(new LocalMessage("ui", "importhelp"));
 
         noSpaceTooltip = new StringTooltips(Localization.translate("ui", "notradespace"));
@@ -102,7 +106,7 @@ public class SilkRoad {
 
     public void postInit() {
         Recipes.registerModRecipe(new Recipe("tradingpost", 1, RecipeTechRegistry.DEMONIC,
-                new Ingredient[] {new Ingredient("anylog", 50), new Ingredient("wool", 10),
-                        new Ingredient("goldbar", 20)}).showAfter("settlementflag"));
+            new Ingredient[]{new Ingredient("anylog", 50), new Ingredient("wool", 10),
+                new Ingredient("goldbar", 20)}).showAfter("settlementflag"));
     }
 }

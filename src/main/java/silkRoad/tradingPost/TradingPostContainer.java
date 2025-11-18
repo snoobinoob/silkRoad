@@ -8,6 +8,7 @@ import necesse.gfx.gameTooltips.GameTooltips;
 import necesse.gfx.gameTooltips.StringTooltips;
 import necesse.inventory.container.customAction.IntCustomAction;
 import necesse.inventory.container.object.OEInventoryContainer;
+import necesse.inventory.container.settlement.events.SettlementDataEvent;
 import silkRoad.SilkRoad;
 import silkRoad.Trade;
 import silkRoad.TradeRegistry;
@@ -21,9 +22,9 @@ public class TradingPostContainer extends OEInventoryContainer {
     public IntCustomAction subscribeAction;
     public IntCustomAction unsubscribeAction;
 
-    public TradingPostContainer(NetworkClient client, int uniqueSeed, TradingPostObjectEntity oe,
-            PacketReader reader) {
-        super(client, uniqueSeed, oe, reader);
+    public TradingPostContainer(NetworkClient client, int uniqueSeed, SettlementDataEvent settlement, TradingPostObjectEntity oe,
+                                PacketReader reader) {
+        super(client, uniqueSeed, settlement, oe, reader);
         objectEntity = oe;
 
         addTradeAction = registerAction(new TradeCustomAction() {
@@ -63,25 +64,29 @@ public class TradingPostContainer extends OEInventoryContainer {
         });
     }
 
+    public boolean canConfigureTrades() {
+        if (client.isServer()) {
+            return hasSettlementAccess(client.getServerClient());
+        } else {
+            return hasSettlementAccess(client.getClientClient().getClient());
+        }
+    }
+
     public boolean canAddOutgoing() {
-        return settlementObjectManager.hasSettlementAccess
-                && objectEntity.trades.outgoingTrades.size() < SilkRoad.settings.maxOutgoingTrades;
+        return canConfigureTrades() && objectEntity.trades.outgoingTrades.size() < SilkRoad.settings.maxOutgoingTrades;
     }
 
     public boolean canAddIncoming() {
-        return settlementObjectManager.hasSettlementAccess
-                && objectEntity.trades.incomingTrades.size() < SilkRoad.settings.maxIncomingTrades;
+        return canConfigureTrades() && objectEntity.trades.incomingTrades.size() < SilkRoad.settings.maxIncomingTrades;
     }
 
     public GameTooltips getSettlementAccessTooltip(GameTooltips defaultTooltips) {
-        if (!settlementObjectManager.foundSettlement) {
+        if (!hasSettlement()) {
             return new StringTooltips(Localization.translate("ui", "settlementnotfound"));
         }
-        if (!settlementObjectManager.hasSettlementAccess) {
-            StringTooltips tooltips =
-                    new StringTooltips(Localization.translate("ui", "settlementispriv"));
-            tooltips.add(Localization.translate("ui", "settlementprivatetip"), GameColor.LIGHT_GRAY,
-                    400);
+        if (!canAddIncoming()) {
+            StringTooltips tooltips = new StringTooltips(Localization.translate("ui", "settlementispriv"));
+            tooltips.add(Localization.translate("ui", "settlementprivatetip"), GameColor.LIGHT_GRAY, 400);
             return tooltips;
         }
         return defaultTooltips;

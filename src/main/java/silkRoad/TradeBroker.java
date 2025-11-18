@@ -1,11 +1,12 @@
 package silkRoad;
 
-import necesse.engine.util.LevelIdentifier;
 import necesse.engine.world.World;
+import necesse.engine.world.worldData.SettlementsWorldData;
 import necesse.entity.objectEntity.ObjectEntity;
 import necesse.inventory.Inventory;
 import necesse.inventory.InventoryItem;
 import necesse.level.maps.Level;
+import necesse.level.maps.levelData.settlementData.ServerSettlementData;
 import silkRoad.tradingPost.TradingPostObjectEntity;
 
 import java.util.ArrayList;
@@ -86,8 +87,10 @@ public class TradeBroker {
     }
 
     private TradingPostObjectEntity getTradingPostAt(Location location, boolean requireSettlement) {
-        Level level = world.getLevel(new LevelIdentifier(location.getIslandPoint(), 0));
-        if (requireSettlement && !level.settlementLayer.isActive()) {
+        Level level = world.getLevel(location.levelIdentifier);
+        SettlementsWorldData settlementsData = SettlementsWorldData.getSettlementsData(world.worldEntity);
+        ServerSettlementData settlementData = settlementsData.getServerDataAtTile(location.levelIdentifier, location.getTileX(), location.getTileY());
+        if (requireSettlement && (settlementData == null || !settlementData.hasFlag())) {
             return null;
         }
         ObjectEntity oe = level.entityManager.getObjectEntity(location.getTileX(), location.getTileY());

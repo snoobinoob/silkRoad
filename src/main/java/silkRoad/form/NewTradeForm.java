@@ -34,25 +34,48 @@ public class NewTradeForm extends Form {
         super(WIDTH, HEIGHT);
         this.container = container;
 
-        addComponent(new FormLocalLabel("ui", "addtrade", new FontOptions(20),
-                FormLocalLabel.ALIGN_MID, WIDTH / 2, 4, WIDTH - 8));
+        addComponent(new FormLocalLabel(
+            "ui",
+            "addtrade",
+            new FontOptions(20),
+            FormLocalLabel.ALIGN_MID,
+            WIDTH / 2,
+            4,
+            WIDTH - 8
+        ));
 
-        exportComponent =
-                addComponent(new TradeItemEditComponent(0, 35, client, SilkRoad.exportTooltips));
+        exportComponent = addComponent(new TradeItemEditComponent(0, 35, client, SilkRoad.exportTooltips));
         addComponent(new ArrowComponent(4, 67, 180));
-        importComponent =
-                addComponent(new TradeItemEditComponent(0, 99, client, SilkRoad.importTooltips));
+        importComponent = addComponent(new TradeItemEditComponent(0, 99, client, SilkRoad.importTooltips));
 
-        acceptButton = addComponent(new FormLocalTextButton("ui", "create", 4, HEIGHT - 56,
-                WIDTH - 8, FormInputSize.SIZE_24, ButtonColor.BASE));
+        acceptButton = addComponent(new FormLocalTextButton(
+            "ui",
+            "create",
+            4,
+            HEIGHT - 56,
+            WIDTH - 8,
+            FormInputSize.SIZE_24,
+            ButtonColor.BASE
+        ));
         acceptButton.onClicked(e -> {
-            Trade trade = new Trade(exportComponent.item, exportComponent.amount,
-                    importComponent.item, importComponent.amount);
+            Trade trade = new Trade(
+                exportComponent.item,
+                exportComponent.amount,
+                importComponent.item,
+                importComponent.amount
+            );
             container.addTradeAction.runAndSend(trade);
         });
 
-        cancelButton = addComponent(new FormLocalTextButton("ui", "cancelbutton", 4, HEIGHT - 28,
-                WIDTH - 8, FormInputSize.SIZE_24, ButtonColor.BASE));
+        cancelButton = addComponent(new FormLocalTextButton(
+            "ui",
+            "cancelbutton",
+            4,
+            HEIGHT - 28,
+            WIDTH - 8,
+            FormInputSize.SIZE_24,
+            ButtonColor.BASE
+        ));
     }
 
     @Override

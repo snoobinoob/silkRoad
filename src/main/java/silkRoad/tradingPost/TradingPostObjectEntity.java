@@ -18,8 +18,8 @@ import java.util.ArrayList;
 public class TradingPostObjectEntity extends InventoryObjectEntity {
     public TradeInfo trades;
 
-    public TradingPostObjectEntity(Level level, int x, int y) {
-        super(level, x, y, 40);
+    public TradingPostObjectEntity(Level level, int tileX, int tileY) {
+        super(level, tileX, tileY, 40);
 
         trades = new TradeInfo();
     }
@@ -36,7 +36,7 @@ public class TradingPostObjectEntity extends InventoryObjectEntity {
         }
 
         if (trades.isDirty()) {
-            server.network.sendToClientsWithTile(new PacketTradeInfo(this), getLevel(), getTileX(), getTileY());
+            server.network.sendToClientsWithTile(new PacketTradeInfo(this), getLevel(), tileX, tileY);
             trades.markClean();
         }
     }

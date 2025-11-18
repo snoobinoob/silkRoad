@@ -10,7 +10,7 @@ public class OutTradesFormSwitcher extends FormSwitcher {
     private final NewTradeForm newTradeForm;
 
     public OutTradesFormSwitcher(Client client, TradingPostContainer container) {
-        outTradesForm = addComponent(new OutTradesForm(client, container));
+        outTradesForm = addComponent(new OutTradesForm(container));
         newTradeForm = addComponent(new NewTradeForm(client, container));
         makeCurrent(outTradesForm);
 

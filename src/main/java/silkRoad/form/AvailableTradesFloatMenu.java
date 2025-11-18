@@ -22,20 +22,37 @@ public class AvailableTradesFloatMenu extends FormFloatMenu {
         Form form = new Form(WIDTH, HEIGHT);
 
         FormTextInput filterInput = form.addComponent(
-                new FormTextInput(4, 4, FormInputSize.SIZE_24, form.getWidth() - 8, 50), 1000);
+            new FormTextInput(
+                4,
+                4,
+                FormInputSize.SIZE_24,
+                form.getWidth() - 8,
+                50
+            ),
+            1000);
         filterInput.placeHolder = new LocalMessage("ui", "searchtip");
         filterInput.rightClickToClear = true;
 
-        TradeComponentList list = form.addComponent(
-                new TradeComponentList(TradeRegistry.getAvailableTrades(container.objectEntity), 4,
-                        32, WIDTH - 8, HEIGHT - 36, TradeComponent.Type.INCOMING, tradeId -> {
-                            container.subscribeAction.runAndSend(tradeId);
-                            remove();
-                        }, SilkRoad.addButtonIcon, container::canAddIncoming,
-                        new LocalMessage("ui", "subscribetrade")));
+        TradeComponentList list = form.addComponent(new TradeComponentList(
+            TradeRegistry.getAvailableTrades(container.objectEntity),
+            4,
+            32,
+            WIDTH - 8,
+            HEIGHT - 36,
+            TradeComponent.Type.INCOMING,
+            tradeId -> {
+                container.subscribeAction.runAndSend(tradeId);
+                remove();
+            },
+            SilkRoad.addButtonIcon,
+            container::canAddIncoming,
+            new LocalMessage("ui", "subscribetrade")
+        ));
 
-        container.objectEntity.trades.onChanged(hashCode(),
-                () -> list.updateTradeComponents(filterInput.getText()));
+        container.objectEntity.trades.onChanged(
+            hashCode(),
+            () -> list.updateTradeComponents(filterInput.getText())
+        );
         filterInput.onChange(e -> list.updateTradeComponents(filterInput.getText()));
 
         setForm(form);

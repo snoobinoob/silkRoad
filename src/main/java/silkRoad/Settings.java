@@ -14,11 +14,11 @@ public class Settings extends ModSettings {
     public void addSaveData(SaveData save) {
         save.addLong("worldtimepertrade", worldTimePerTrade, "Attempt trades every X milliseconds");
         save.addInt("maxoutgoingtrades", maxOutgoingTrades,
-                "Max owned trades per trading post (right side of UI)");
+            "Max owned trades per trading post (right side of UI)");
         save.addInt("maxincomingtrades", maxIncomingTrades,
-                "Max subscribed trades per trading post (left side of UI)");
+            "Max subscribed trades per trading post (left side of UI)");
         save.addInt("maxtradedistance", maxTradeDistance,
-                "Number of island hops (-1 for infinite)");
+            "Allowed distance between settlements (-1 for infinite)");
     }
 
     @Override

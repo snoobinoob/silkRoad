@@ -3,7 +3,6 @@ package silkRoad.form;
 import necesse.engine.Settings;
 import necesse.engine.gameLoop.tickManager.TickManager;
 import necesse.engine.localization.message.LocalMessage;
-import necesse.engine.network.client.Client;
 import necesse.entity.mobs.PlayerMob;
 import necesse.gfx.forms.Form;
 import necesse.gfx.forms.components.FormInputSize;
@@ -21,18 +20,31 @@ public class OutTradesForm extends Form {
     public FormLocalTextButton addTradeButton;
     public TradeComponentList list;
 
-    public OutTradesForm(Client client, TradingPostContainer container) {
+    public OutTradesForm(TradingPostContainer container) {
         super(156, 198);
         this.container = container;
 
-        addTradeButton = addComponent(new FormLocalTextButton("ui", "newtrade", 4, 4,
-            getWidth() - 8, FormInputSize.SIZE_24, ButtonColor.BASE));
-        list = addComponent(new TradeComponentList(container.objectEntity.trades.outgoingTrades, 4,
-            32, getWidth() - 8, getHeight() - 36, TradeComponent.Type.OUTGOING, tradeId -> {
-            container.removeTradeAction.runAndSend(tradeId);
-        }, Settings.UI.button_escaped_20,
-            () -> container.settlementObjectManager.hasSettlementAccess,
-            new LocalMessage("ui", "deletetrade")));
+        addTradeButton = addComponent(new FormLocalTextButton(
+            "ui",
+            "newtrade",
+            4,
+            4,
+            getWidth() - 8,
+            FormInputSize.SIZE_24,
+            ButtonColor.BASE
+        ));
+        list = addComponent(new TradeComponentList(
+            container.objectEntity.trades.outgoingTrades,
+            4,
+            32,
+            getWidth() - 8,
+            getHeight() - 36,
+            TradeComponent.Type.OUTGOING,
+            tradeId -> container.removeTradeAction.runAndSend(tradeId),
+            Settings.UI.button_escaped_20,
+            container::canConfigureTrades,
+            new LocalMessage("ui", "deletetrade")
+        ));
     }
 
     @Override

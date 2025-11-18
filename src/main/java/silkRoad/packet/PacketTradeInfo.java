@@ -8,32 +8,31 @@ import necesse.engine.network.client.Client;
 import silkRoad.tradingPost.TradingPostObjectEntity;
 
 public class PacketTradeInfo extends Packet {
-    private final int x;
-    private final int y;
+    private final int tileX;
+    private final int tileY;
     private final Packet content;
 
     public PacketTradeInfo(byte[] data) {
         super(data);
         PacketReader reader = new PacketReader(this);
-        x = reader.getNextShortUnsigned();
-        y = reader.getNextShortUnsigned();
+        tileX = reader.getNextInt();
+        tileY = reader.getNextInt();
         content = reader.getNextContentPacket();
     }
 
     public PacketTradeInfo(TradingPostObjectEntity objectEntity) {
-        x = objectEntity.getX();
-        y = objectEntity.getY();
+        tileX = objectEntity.tileX;
+        tileY = objectEntity.tileY;
         content = objectEntity.trades.getContentPacket();
         PacketWriter writer = new PacketWriter(this);
-        writer.putNextShortUnsigned(x);
-        writer.putNextShortUnsigned(y);
+        writer.putNextInt(tileX);
+        writer.putNextInt(tileY);
         writer.putNextContentPacket(content);
     }
 
     @Override
     public void processClient(NetworkPacket packet, Client client) {
-        TradingPostObjectEntity objectEntity =
-                (TradingPostObjectEntity) client.getLevel().entityManager.getObjectEntity(x, y);
+        TradingPostObjectEntity objectEntity = (TradingPostObjectEntity) client.getLevel().entityManager.getObjectEntity(tileX, tileY);
         if (objectEntity != null) {
             objectEntity.trades.applyContentPacket(content);
         }
