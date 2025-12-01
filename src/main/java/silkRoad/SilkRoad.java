@@ -27,7 +27,6 @@ import silkRoad.tradingPost.TradingPostContainer;
 import silkRoad.tradingPost.TradingPostObject;
 import silkRoad.tradingPost.TradingPostObjectEntity;
 
-import java.awt.*;
 import java.util.ArrayList;
 
 @ModEntry
@@ -80,7 +79,7 @@ public class SilkRoad {
     }
 
     public void initResources() {
-        addButtonIcon = new ButtonIcon(necesse.engine.Settings.UI, "button_plus_20", Color.BLACK);
+        addButtonIcon = new ButtonIcon(necesse.engine.Settings.UI, "button_add_20", false);
 
         exportTooltips = new ListGameTooltips();
         exportTooltips.add(new StringTooltips(
