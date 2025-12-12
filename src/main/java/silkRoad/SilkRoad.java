@@ -19,10 +19,7 @@ import necesse.inventory.recipe.Ingredient;
 import necesse.inventory.recipe.Recipe;
 import necesse.inventory.recipe.Recipes;
 import silkRoad.form.TradingPostContainerForm;
-import silkRoad.packet.PacketAddTrade;
-import silkRoad.packet.PacketConnectionTradeList;
-import silkRoad.packet.PacketRemoveTrade;
-import silkRoad.packet.PacketTradeInfo;
+import silkRoad.packet.*;
 import silkRoad.tradingPost.TradingPostContainer;
 import silkRoad.tradingPost.TradingPostObject;
 import silkRoad.tradingPost.TradingPostObjectEntity;
@@ -47,34 +44,53 @@ public class SilkRoad {
         broker = new TradeBroker();
 
         TRADING_POST_CONTAINER = ContainerRegistry.registerSettlementDependantOEContainer(
-            (client, uniqueSeed, settlement, oe, content) -> new TradingPostContainerForm(client,
-                new TradingPostContainer(client.getClient(), uniqueSeed, settlement,
-                    (TradingPostObjectEntity) oe, new PacketReader(content)),
-                uniqueSeed),
+            (client, uniqueSeed, settlement, oe, content) -> new TradingPostContainerForm(
+                client,
+                new TradingPostContainer(
+                    client.getClient(),
+                    uniqueSeed,
+                    settlement,
+                    (TradingPostObjectEntity) oe,
+                    new PacketReader(content)
+                ),
+                uniqueSeed
+            ),
             (serverClient, uniqueSeed, settlement, oe, content, serverObject) -> new TradingPostContainer(
-                serverClient, uniqueSeed, settlement, (TradingPostObjectEntity) oe,
-                new PacketReader(content)));
+                serverClient,
+                uniqueSeed,
+                settlement,
+                (TradingPostObjectEntity) oe,
+                new PacketReader(content)
+            )
+        );
 
         PacketRegistry.registerPacket(PacketTradeInfo.class);
         PacketRegistry.registerPacket(PacketConnectionTradeList.class);
+        PacketRegistry.registerPacket(PacketSyncSettings.class);
         PacketRegistry.registerPacket(PacketAddTrade.class);
         PacketRegistry.registerPacket(PacketRemoveTrade.class);
 
-        GameEvents.addListener(ServerClientConnectedEvent.class,
+        GameEvents.addListener(
+            ServerClientConnectedEvent.class,
             new GameEventListener<ServerClientConnectedEvent>() {
                 @Override
                 public void onEvent(ServerClientConnectedEvent event) {
                     ArrayList<TradeMetadata> allTrades = new ArrayList<>(TradeRegistry.allTrades());
                     event.client.sendPacket(new PacketConnectionTradeList(allTrades));
+                    event.client.sendPacket(new PacketSyncSettings(settings));
                 }
-            });
-
-        GameEvents.addListener(ServerStartEvent.class, new GameEventListener<ServerStartEvent>() {
-            @Override
-            public void onEvent(ServerStartEvent event) {
-                broker.init(event.server.world);
             }
-        });
+        );
+
+        GameEvents.addListener(
+            ServerStartEvent.class,
+            new GameEventListener<ServerStartEvent>() {
+                @Override
+                public void onEvent(ServerStartEvent event) {
+                    broker.init(event.server.world);
+                }
+            }
+        );
 
     }
 
@@ -104,8 +120,16 @@ public class SilkRoad {
     }
 
     public void postInit() {
-        Recipes.registerModRecipe(new Recipe("tradingpost", 1, RecipeTechRegistry.DEMONIC,
-            new Ingredient[]{new Ingredient("anylog", 50), new Ingredient("wool", 10),
-                new Ingredient("goldbar", 20)}).showAfter("settlementflag"));
+        Recipes.registerModRecipe(
+            new Recipe(
+                "tradingpost",
+                1,
+                RecipeTechRegistry.DEMONIC_WORKSTATION,
+                new Ingredient[]{
+                    new Ingredient("anylog", 50),
+                    new Ingredient("wool", 10),
+                    new Ingredient("goldbar", 20)
+                }
+            ).showAfter("settlementflag"));
     }
 }

@@ -1,10 +1,11 @@
 package silkRoad;
 
-import java.util.ArrayList;
-import java.util.List;
 import necesse.engine.save.LoadData;
 import necesse.engine.save.SaveData;
 import silkRoad.tradingPost.TradingPostObjectEntity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class TradeMetadata {
     public Trade trade;
@@ -45,6 +46,9 @@ public class TradeMetadata {
     public static TradeMetadata fromLoadData(LoadData save) {
         Trade trade = Trade.fromLoadData(save);
         LoadData sourceData = save.getFirstLoadDataByName("SOURCE");
+        if (trade == null || sourceData == null) {
+            return null;
+        }
         Location source = Location.fromLoadData(sourceData);
         TradeMetadata tradeData = new TradeMetadata(trade, source);
         for (LoadData destData : save.getLoadDataByName("DESTINATION")) {

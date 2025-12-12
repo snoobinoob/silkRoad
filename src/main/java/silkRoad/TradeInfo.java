@@ -1,17 +1,17 @@
 package silkRoad;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import necesse.engine.network.Packet;
 import necesse.engine.network.PacketReader;
 import necesse.engine.network.PacketWriter;
 import necesse.engine.save.LoadData;
 import necesse.engine.save.SaveData;
 import silkRoad.tradingPost.TradingPostObjectEntity;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class TradeInfo {
     public List<Trade> incomingTrades;
@@ -141,15 +141,28 @@ public class TradeInfo {
 
     public void applyLoadData(LoadData save) {
         LoadData data = save.getFirstLoadDataByName("TRADEINFO");
+        if (data == null) {
+            return;
+        }
         LoadData incoming = data.getFirstLoadDataByName("IN");
         incomingTrades.clear();
-        for (LoadData tradeData : incoming.getLoadDataByName("TRADE")) {
-            incomingTrades.add(Trade.fromLoadData(tradeData));
+        if (incoming != null) {
+            for (LoadData tradeData : incoming.getLoadDataByName("TRADE")) {
+                Trade trade = Trade.fromLoadData(tradeData);
+                if (TradeRegistry.hasTrade(trade)) {
+                    incomingTrades.add(trade);
+                }
+            }
         }
         LoadData outgoing = data.getFirstLoadDataByName("OUT");
         outgoingTrades.clear();
-        for (LoadData tradeData : outgoing.getLoadDataByName("TRADE")) {
-            outgoingTrades.add(Trade.fromLoadData(tradeData));
+        if (outgoing != null) {
+            for (LoadData tradeData : outgoing.getLoadDataByName("TRADE")) {
+                Trade trade = Trade.fromLoadData(tradeData);
+                if (TradeRegistry.hasTrade(trade)) {
+                    outgoingTrades.add(trade);
+                }
+            }
         }
     }
 }

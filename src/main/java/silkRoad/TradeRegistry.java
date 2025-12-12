@@ -1,13 +1,13 @@
 package silkRoad;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
 import necesse.engine.save.LoadData;
 import necesse.engine.save.SaveData;
 import silkRoad.packet.PacketAddTrade;
 import silkRoad.packet.PacketRemoveTrade;
 import silkRoad.tradingPost.TradingPostObjectEntity;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class TradeRegistry {
     private static int nextId = 0;
@@ -34,7 +34,7 @@ public class TradeRegistry {
         trade.id = nextId;
         source.trades.addOutgoingTrade(trade);
         source.getLevel().getServer().network
-                .sendToAllClients(new PacketAddTrade(trade, new Location(source)));
+            .sendToAllClients(new PacketAddTrade(trade, new Location(source)));
         return nextId++;
     }
 
@@ -51,7 +51,7 @@ public class TradeRegistry {
             tradeMap.remove(id);
 
             source.getLevel().getServer().network
-                    .sendToAllClients(new PacketRemoveTrade(tradeData.trade, new Location(source)));
+                .sendToAllClients(new PacketRemoveTrade(tradeData.trade, new Location(source)));
         }
         return tradeData == null ? null : tradeData.trade;
     }
@@ -88,11 +88,24 @@ public class TradeRegistry {
         Location oeLocation = new Location(oe);
         return clientTrades.stream().filter(t -> {
             if (SilkRoad.settings.maxTradeDistance >= 0
-                    && oeLocation.distanceTo(t.source) > SilkRoad.settings.maxTradeDistance) {
+                && oeLocation.distanceTo(t.source) > SilkRoad.settings.maxTradeDistance) {
                 return false;
             }
             return !oeLocation.equals(t.source) && !oe.trades.incomingTrades.contains(t.trade);
         }).map(t -> t.trade).collect(Collectors.toList());
+    }
+
+    public static boolean hasTrade(Trade trade) {
+        if (trade == null) {
+            return false;
+        }
+
+        for (TradeMetadata tradeMetadata : clientTrades) {
+            if (tradeMetadata.trade.equals(trade)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static SaveData getSave() {
@@ -107,10 +120,12 @@ public class TradeRegistry {
     }
 
     public static void loadSave(LoadData save) {
-        nextId = save.getInt("nextid");
+        nextId = save.getInt("nextid", 0);
         for (LoadData tradeLoadData : save.getLoadDataByName("TRADE")) {
             TradeMetadata tradeData = TradeMetadata.fromLoadData(tradeLoadData);
-            tradeMap.put(tradeData.trade.id, tradeData);
+            if (tradeData != null) {
+                tradeMap.put(tradeData.trade.id, tradeData);
+            }
         }
     }
 }

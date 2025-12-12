@@ -22,7 +22,7 @@ public class Trade {
     }
 
     private Trade(String exportItemId, int exportItemAmount, String importItemId,
-            int importItemAmount) {
+                  int importItemAmount) {
         if (exportItemAmount >= 0) {
             exportItem = new InventoryItem(exportItemId, exportItemAmount);
         }
@@ -63,15 +63,19 @@ public class Trade {
     }
 
     public static Trade fromLoadData(LoadData save) {
-        int id = save.getInt("id");
-        int exportAmount = save.getInt("exportamount");
-        String exportItem = exportAmount < 0 ? null : save.getSafeString("exportitem");
-        int importAmount = save.getInt("importamount");
-        String importItem = importAmount < 0 ? null : save.getSafeString("importitem");
+        try {
+            int id = save.getInt("id");
+            int exportAmount = save.getInt("exportamount");
+            String exportItem = exportAmount < 0 ? null : save.getSafeString("exportitem");
+            int importAmount = save.getInt("importamount");
+            String importItem = importAmount < 0 ? null : save.getSafeString("importitem");
 
-        Trade trade = new Trade(exportItem, exportAmount, importItem, importAmount);
-        trade.id = id;
-        return trade;
+            Trade trade = new Trade(exportItem, exportAmount, importItem, importAmount);
+            trade.id = id;
+            return trade;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public void writePacket(PacketWriter writer) {
