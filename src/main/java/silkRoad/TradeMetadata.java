@@ -28,7 +28,7 @@ public class TradeMetadata {
             return false;
         }
         TradeMetadata other = (TradeMetadata) obj;
-        return trade.id == other.trade.id;
+        return trade.equals(other.trade);
     }
 
     public void addSaveData(SaveData save) {

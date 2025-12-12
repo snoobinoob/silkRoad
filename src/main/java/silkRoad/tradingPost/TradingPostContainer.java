@@ -6,7 +6,7 @@ import necesse.engine.network.PacketReader;
 import necesse.gfx.GameColor;
 import necesse.gfx.gameTooltips.GameTooltips;
 import necesse.gfx.gameTooltips.StringTooltips;
-import necesse.inventory.container.customAction.IntCustomAction;
+import necesse.inventory.container.customAction.StringCustomAction;
 import necesse.inventory.container.object.OEInventoryContainer;
 import necesse.inventory.container.settlement.events.SettlementDataEvent;
 import silkRoad.SilkRoad;
@@ -18,9 +18,9 @@ public class TradingPostContainer extends OEInventoryContainer {
     public TradingPostObjectEntity objectEntity;
 
     public TradeCustomAction addTradeAction;
-    public IntCustomAction removeTradeAction;
-    public IntCustomAction subscribeAction;
-    public IntCustomAction unsubscribeAction;
+    public StringCustomAction removeTradeAction;
+    public StringCustomAction subscribeAction;
+    public StringCustomAction unsubscribeAction;
 
     public TradingPostContainer(NetworkClient client, int uniqueSeed, SettlementDataEvent settlement, TradingPostObjectEntity oe,
                                 PacketReader reader) {
@@ -36,27 +36,27 @@ public class TradingPostContainer extends OEInventoryContainer {
             }
         });
 
-        removeTradeAction = registerAction(new IntCustomAction() {
+        removeTradeAction = registerAction(new StringCustomAction() {
             @Override
-            protected void run(int tradeId) {
+            protected void run(String tradeId) {
                 if (client.isServer()) {
                     TradeRegistry.removeTrade(tradeId, objectEntity);
                 }
             }
         });
 
-        subscribeAction = registerAction(new IntCustomAction() {
+        subscribeAction = registerAction(new StringCustomAction() {
             @Override
-            protected void run(int tradeId) {
+            protected void run(String tradeId) {
                 if (client.isServer()) {
                     TradeRegistry.subscribe(tradeId, objectEntity);
                 }
             }
         });
 
-        unsubscribeAction = registerAction(new IntCustomAction() {
+        unsubscribeAction = registerAction(new StringCustomAction() {
             @Override
-            protected void run(int tradeId) {
+            protected void run(String tradeId) {
                 if (client.isServer()) {
                     TradeRegistry.unsubscribe(tradeId, objectEntity);
                 }

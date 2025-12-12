@@ -10,35 +10,23 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class TradeRegistry {
-    private static int nextId = 0;
-    private static Map<Integer, TradeMetadata> tradeMap = new HashMap<>();
+    private static final Map<String, TradeMetadata> tradeMap = new HashMap<>();
     private static List<TradeMetadata> clientTrades = new LinkedList<>();
-
-    public static void init() {
-        nextId = 0;
-        tradeMap = new HashMap<>();
-        clientTrades = new LinkedList<>(); // Note: Destination data never filled
-    }
-
-    public static Trade getTrade(int id) {
-        TradeMetadata tradeData = tradeMap.get(id);
-        return tradeData == null ? null : tradeData.trade;
-    }
 
     public static Collection<TradeMetadata> allTrades() {
         return tradeMap.values();
     }
 
-    public static int register(Trade trade, TradingPostObjectEntity source) {
-        tradeMap.put(nextId, new TradeMetadata(trade, source));
-        trade.id = nextId;
+    public static void register(Trade trade, TradingPostObjectEntity source) {
+        String id = UUID.randomUUID().toString();
+        tradeMap.put(id, new TradeMetadata(trade, source));
+        trade.id = id;
         source.trades.addOutgoingTrade(trade);
         source.getLevel().getServer().network
             .sendToAllClients(new PacketAddTrade(trade, new Location(source)));
-        return nextId++;
     }
 
-    public static Trade removeTrade(int id, TradingPostObjectEntity source) {
+    public static Trade removeTrade(String id, TradingPostObjectEntity source) {
         TradeMetadata tradeData = tradeMap.get(id);
         if (tradeData != null) {
             source.trades.removeOutgoingTrade(tradeData.trade);
@@ -56,7 +44,7 @@ public class TradeRegistry {
         return tradeData == null ? null : tradeData.trade;
     }
 
-    public static void subscribe(int id, TradingPostObjectEntity subscriber) {
+    public static void subscribe(String id, TradingPostObjectEntity subscriber) {
         TradeMetadata tradeData = tradeMap.get(id);
         if (tradeData != null) {
             tradeData.destinations.add(new Location(subscriber));
@@ -64,7 +52,7 @@ public class TradeRegistry {
         }
     }
 
-    public static void unsubscribe(int id, TradingPostObjectEntity subscriber) {
+    public static void unsubscribe(String id, TradingPostObjectEntity subscriber) {
         TradeMetadata tradeData = tradeMap.get(id);
         if (tradeData != null) {
             tradeData.destinations.remove(new Location(subscriber));
@@ -110,7 +98,6 @@ public class TradeRegistry {
 
     public static SaveData getSave() {
         SaveData save = new SaveData("TRADES");
-        save.addInt("nextid", nextId);
         for (TradeMetadata tradeData : tradeMap.values()) {
             SaveData tradeSaveData = new SaveData("TRADE");
             tradeData.addSaveData(tradeSaveData);
@@ -120,7 +107,6 @@ public class TradeRegistry {
     }
 
     public static void loadSave(LoadData save) {
-        nextId = save.getInt("nextid", 0);
         for (LoadData tradeLoadData : save.getLoadDataByName("TRADE")) {
             TradeMetadata tradeData = TradeMetadata.fromLoadData(tradeLoadData);
             if (tradeData != null) {

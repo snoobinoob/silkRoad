@@ -56,8 +56,8 @@ class TradingPost2Object extends GameObject {
 
     @Override
     public void addDrawables(List<LevelSortedDrawable> list, OrderableDrawables tileList,
-            Level level, int tileX, int tileY, TickManager tickManager, GameCamera camera,
-            PlayerMob perspective) {
+                             Level level, int tileX, int tileY, TickManager tickManager, GameCamera camera,
+                             PlayerMob perspective) {
         GameLight light = level.getLightLevel(tileX, tileY);
         int drawX = camera.getTileDrawX(tileX);
         int drawY = camera.getTileDrawY(tileY);
@@ -102,9 +102,15 @@ class TradingPost2Object extends GameObject {
     public void interact(Level level, int x, int y, PlayerMob player) {
         if (level.isServer()) {
             LevelObject masterObject = getMultiTile(level.getObjectRotation(x, y))
-                    .getMasterLevelObject(level, x, y).get();
-            TradingPostContainer.openAndSendContainer(SilkRoad.TRADING_POST_CONTAINER,
-                    player.getServerClient(), level, masterObject.tileX, masterObject.tileY);
+                .getMasterLevelObject(level, 0, x, y)
+                .get();
+            TradingPostContainer.openAndSendContainer(
+                SilkRoad.TRADING_POST_CONTAINER,
+                player.getServerClient(),
+                level,
+                masterObject.tileX,
+                masterObject.tileY
+            );
         }
     }
 }

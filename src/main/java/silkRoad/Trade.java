@@ -8,7 +8,7 @@ import necesse.inventory.InventoryItem;
 import necesse.inventory.item.Item;
 
 public class Trade {
-    public int id;
+    public String id = "-1";
     public InventoryItem exportItem;
     public InventoryItem importItem;
 
@@ -21,8 +21,7 @@ public class Trade {
         }
     }
 
-    private Trade(String exportItemId, int exportItemAmount, String importItemId,
-                  int importItemAmount) {
+    private Trade(String exportItemId, int exportItemAmount, String importItemId, int importItemAmount) {
         if (exportItemAmount >= 0) {
             exportItem = new InventoryItem(exportItemId, exportItemAmount);
         }
@@ -43,11 +42,11 @@ public class Trade {
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof Trade && ((Trade) obj).id == id;
+        return obj instanceof Trade && ((Trade) obj).id.equals(id);
     }
 
     public void addSaveData(SaveData data) {
-        data.addInt("id", id);
+        data.addSafeString("id", id);
         if (exportItem == null) {
             data.addInt("exportamount", -1);
         } else {
@@ -64,7 +63,7 @@ public class Trade {
 
     public static Trade fromLoadData(LoadData save) {
         try {
-            int id = save.getInt("id");
+            String id = save.getSafeString("id");
             int exportAmount = save.getInt("exportamount");
             String exportItem = exportAmount < 0 ? null : save.getSafeString("exportitem");
             int importAmount = save.getInt("importamount");
@@ -79,7 +78,7 @@ public class Trade {
     }
 
     public void writePacket(PacketWriter writer) {
-        writer.putNextInt(id);
+        writer.putNextString(id);
         if (exportItem == null) {
             writer.putNextInt(-1);
         } else {
@@ -95,7 +94,7 @@ public class Trade {
     }
 
     public static Trade readPacket(PacketReader reader) {
-        int id = reader.getNextInt();
+        String id = reader.getNextString();
         int exportAmount = reader.getNextInt();
         String exportItem = exportAmount < 0 ? null : reader.getNextString();
         int importAmount = reader.getNextInt();

@@ -37,7 +37,7 @@ public class TradeBroker {
         }
     }
 
-    public void unsubscribeLocation(int tradeId, Location location) {
+    public void unsubscribeLocation(String tradeId, Location location) {
         TradingPostObjectEntity oe = getTradingPostAt(location, false);
         if (oe == null) {
             return;

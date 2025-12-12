@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class TradeInfo {
     public List<Trade> incomingTrades;
@@ -72,13 +71,11 @@ public class TradeInfo {
     }
 
     public void remove(TradingPostObjectEntity oe) {
-        List<Integer> tradeIds = incomingTrades.stream().map(t -> t.id).collect(Collectors.toList());
-        for (int tradeId : tradeIds) {
-            TradeRegistry.unsubscribe(tradeId, oe);
+        for (Trade trade : incomingTrades) {
+            TradeRegistry.unsubscribe(trade.id, oe);
         }
-        tradeIds = outgoingTrades.stream().map(t -> t.id).collect(Collectors.toList());
-        for (int tradeId : tradeIds) {
-            TradeRegistry.removeTrade(tradeId, oe);
+        for (Trade trade : outgoingTrades) {
+            TradeRegistry.removeTrade(trade.id, oe);
         }
     }
 
