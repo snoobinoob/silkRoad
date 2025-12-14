@@ -1,10 +1,11 @@
 package silkRoad.packet;
 
-import java.util.List;
 import necesse.engine.network.NetworkPacket;
 import necesse.engine.network.client.Client;
 import silkRoad.TradeMetadata;
 import silkRoad.TradeRegistry;
+
+import java.util.List;
 
 public class PacketConnectionTradeList extends PacketTradeList {
 

@@ -88,12 +88,7 @@ public class TradeRegistry {
             return false;
         }
 
-        for (TradeMetadata tradeMetadata : clientTrades) {
-            if (tradeMetadata.trade.equals(trade)) {
-                return true;
-            }
-        }
-        return false;
+        return tradeMap.containsKey(trade.id);
     }
 
     public static SaveData getSave() {
