@@ -53,9 +53,10 @@ public class FormItemIconBackground extends FormButton implements FormPositionCo
             GameTooltipManager.addTooltip(allTooltips, GameBackground.getItemTooltipBackground(),
                     TooltipLocation.FORM_FOCUS);
         }
-        if (item == null)
+        if (item == null) {
             return;
-        item.drawIcon(perspective, getX(), getY() + 2, 32);
+        }
+        item.drawIcon(perspective, getX(), getY() + 2, 32, null);
         String amountStr;
         if (item.getAmount() > 9999) {
             amountStr = GameUtils.metricNumber(item.getAmount(), 2, true, RoundingMode.FLOOR, null);
@@ -63,8 +64,7 @@ public class FormItemIconBackground extends FormButton implements FormPositionCo
             amountStr = String.valueOf(item.getAmount());
         }
         int width = FontManager.bit.getWidthCeil(amountStr, Item.tipFontOptions);
-        FontManager.bit.drawString((getX() + 30 - width), getY() + 2, amountStr,
-                Item.tipFontOptions);
+        FontManager.bit.drawString((getX() + 30 - width), getY() + 2, amountStr, Item.tipFontOptions);
     }
 
     @Override

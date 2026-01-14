@@ -6,7 +6,7 @@ import necesse.entity.objectEntity.ObjectEntity;
 import necesse.inventory.Inventory;
 import necesse.inventory.InventoryItem;
 import necesse.level.maps.Level;
-import necesse.level.maps.levelData.settlementData.ServerSettlementData;
+import necesse.level.maps.levelData.settlementData.CachedSettlementData;
 import silkRoad.tradingPost.TradingPostObjectEntity;
 
 import java.util.ArrayList;
@@ -88,16 +88,32 @@ public class TradeBroker {
 
     private TradingPostObjectEntity getTradingPostAt(Location location, boolean requireSettlement) {
         Level level = world.getLevel(location.levelIdentifier);
-        SettlementsWorldData settlementsData = SettlementsWorldData.getSettlementsData(world.worldEntity);
-        ServerSettlementData settlementData = settlementsData.getServerDataAtTile(location.levelIdentifier, location.getTileX(), location.getTileY());
-        if (requireSettlement && (settlementData == null || !settlementData.hasFlag())) {
+        if (level == null) {
             return null;
         }
-        ObjectEntity oe = level.entityManager.getObjectEntity(location.getTileX(), location.getTileY());
+
+        SettlementsWorldData settlementsData = SettlementsWorldData.getSettlementsData(world.worldEntity);
+
+        int tileX = location.getTileX();
+        int tileY = location.getTileY();
+
+        int sid = settlementsData.getSettlementUniqueIDAtTile(location.levelIdentifier, tileX, tileY);
+        if (requireSettlement) {
+            if (sid == 0) {
+                return null;
+            }
+            CachedSettlementData cachedData = settlementsData.getCachedData(sid);
+            if (cachedData == null || cachedData.getOwnerAuth() == -1L) {
+                return null;
+            }
+        }
+
+        ObjectEntity oe = level.entityManager.getObjectEntity(tileX, tileY);
         if (!(oe instanceof TradingPostObjectEntity)) {
             return null;
         }
-        return ((TradingPostObjectEntity) oe);
+
+        return (TradingPostObjectEntity) oe;
     }
 
     private Collection<InventoryItem> getItems(Inventory inv, InventoryItem search) {
